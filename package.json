@@ -1,6 +1,6 @@
 {
   "name": "qwik-styled-ve",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
   "main": "./lib/index.cjs",
   "qwik": "./lib/index.js",
