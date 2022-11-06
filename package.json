@@ -1,16 +1,20 @@
 {
-  "name": "my-qwik-library-name",
+  "name": "qwik-styled-ve",
   "version": "0.0.1",
-  "description": "Create a reusable Qwik component library",
-  "main": "./lib/index.qwik.mjs",
-  "qwik": "./lib/index.qwik.mjs",
-  "module": "./lib/index.qwik.mjs",
+  "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
+  "main": "./lib/index.cjs",
+  "qwik": "./lib/index.js",
+  "module": "./lib/index.js",
   "types": "./lib-types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.qwik.mjs",
-      "require": "./lib/index.qwik.cjs",
+      "import": "./lib/index.js",
+      "require": "./lib/index.cjs",
       "types": "./lib-types/index.d.ts"
+    },
+    "./lib/real-styled.js": {
+      "import": "./lib/real-styled.js",
+      "require": "./lib/real-styled.cjs"
     }
   },
   "files": [
@@ -31,7 +35,7 @@
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "lint": "eslint .",
-    "lint.ci": "eslint .",
+    "test": "true",
     "release": "np",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
@@ -39,15 +43,21 @@
   "devDependencies": {
     "@builder.io/qwik": "0.12.1",
     "@types/eslint": "^8.4.10",
-    "@types/node": "latest",
+    "@types/node": "^18.11.9",
+    "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
+    "@vanilla-extract/css": "^1.9.1",
     "eslint": "^8.27.0",
-    "eslint-plugin-qwik": "latest",
-    "node-fetch": "3.2.10",
+    "eslint-plugin-qwik": "0.12.1",
     "np": "^7.6.2",
-    "prettier": "2.7.1",
-    "typescript": "4.8.4",
+    "prettier": "^2.7.1",
+    "stylis": "^4.1.3",
+    "typescript": "^4.8.4",
     "vite": "^3.2.2"
+  },
+  "peerDependencies": {
+    "@builder.io/qwik": "^0.12.1",
+    "@vanilla-extract/css": "^1.9.1"
   }
 }
