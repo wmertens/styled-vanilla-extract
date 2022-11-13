@@ -38,29 +38,30 @@
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "lint": "eslint .",
-    "test": "true",
+    "test": "vitest",
     "release": "np",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
   },
   "devDependencies": {
-    "@builder.io/qwik": "0.12.1",
+    "@builder.io/qwik": "^0.13.3",
     "@types/eslint": "^8.4.10",
     "@types/node": "^18.11.9",
     "@types/stylis": "^4.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.42.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
     "@vanilla-extract/css": "^1.9.1",
     "eslint": "^8.27.0",
-    "eslint-plugin-qwik": "0.12.1",
+    "eslint-plugin-qwik": "^0.13.3",
     "np": "^7.6.2",
     "prettier": "^2.7.1",
     "stylis": "^4.1.3",
     "typescript": "^4.8.4",
-    "vite": "^3.2.2"
+    "vite": "^3.2.3",
+    "vitest": "^0.25.1"
   },
   "peerDependencies": {
-    "@builder.io/qwik": "^0.12.1",
+    "@builder.io/qwik": "^0.13.1",
     "@vanilla-extract/css": "^1.9.1"
   },
   "dependencies": {

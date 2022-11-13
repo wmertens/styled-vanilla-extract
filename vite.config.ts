@@ -1,4 +1,6 @@
+/// <reference types="vitest" />
 import {defineConfig} from 'vite'
+import {configDefaults} from 'vitest/config'
 import {qwikVite} from '@builder.io/qwik/optimizer'
 import pkg from './package.json'
 
@@ -24,5 +26,10 @@ export default defineConfig(() => {
 			},
 		},
 		plugins: [qwikVite()],
+		test: {
+			/* for example, use global to avoid globals imports (describe, test, expect): */
+			// globals: true,
+			exclude: [...configDefaults.exclude, 'lib/**', 'lib-types/**'],
+		},
 	}
 })

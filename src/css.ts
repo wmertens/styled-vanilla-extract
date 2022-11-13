@@ -1,10 +1,13 @@
-import type {ComplexStyleRule} from '@vanilla-extract/css'
+import type {StyleRule} from '@vanilla-extract/css'
 import {compile} from 'stylis'
+
+export const veClassRE = /^[a-zA-Z0-9_./]*[a-z0-9]{6}\d+$/
+export const veMultiClassRE = /^([a-zA-Z0-9_./]*[a-z0-9]{6}\d+( |$)){2,}/
 
 export const css = (
 	tpl: TemplateStringsArray,
 	...expr: string[]
-): ComplexStyleRule => {
+): StyleRule => {
 	let out = tpl[0]
 	for (let i = 1; i < tpl.length; i++) {
 		// We generate placeholders here and insert the expr during conversion,
@@ -14,7 +17,7 @@ export const css = (
 	}
 
 	const classListToSelector = (cl: string) => {
-		if (/^(([a-z\d_]+__)?[a-z\d]{6}\d+( |$))+/.test(cl)) {
+		if (veMultiClassRE.test(cl)) {
 			const i = cl.indexOf(' ')
 			return `.${i === -1 ? cl : cl.slice(0, i)}`
 		}
@@ -22,30 +25,24 @@ export const css = (
 	}
 	const recover = (str: string) =>
 		typeof str === 'string'
-			? str.replace(/##(\d+)##/g, (_, e) => expr[+e])
+			? str.replace(/##(\d+)##/g, (_, e) => `${expr[+e]}`)
 			: `!!!{${typeof str}: ${str}}`
 	const selector = (str: string) =>
 		str
-			.replace(/##(\d+)##/g, (_, e) => classListToSelector(expr[+e]))
+			.replace(/##(\d+)##/g, (_, e) => classListToSelector(`${expr[+e]}`))
 			.replace(/&\f/g, '&')
 
-	const compiledToVE = (
-		compiled: ReturnType<typeof compile>
-	): ComplexStyleRule => {
-		const out: ComplexStyleRule = {}
+	const compiledToVE = (compiled: ReturnType<typeof compile>): StyleRule => {
+		const out: StyleRule = {}
 		const assignDecll = (obj: {[x: string]: any}, k: string, v: string) => {
 			if (obj[k]) {
 				if (!Array.isArray(obj[k])) obj[k] = [obj[k]]
 				obj[k].push(v)
 			} else obj[k] = v
 		}
-		const assignObj = (
-			type: keyof ComplexStyleRule,
-			k: string,
-			children: any
-		) => {
+		const assignObj = (type: keyof StyleRule, k: string, children: any) => {
 			// @ts-ignore
-			out[type] ||= {} as ComplexStyleRule
+			out[type] ||= {} as StyleRule
 			// @ts-ignore
 			if (out[type][k]) throw new Error(`${type}.${k} is already defined`)
 			// @ts-ignore

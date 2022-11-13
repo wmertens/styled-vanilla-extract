@@ -3,6 +3,41 @@
 This provides a [Styled-Components](https://styled-components.com/)-like (SC) API in Qwik, using [vanilla-extract](https://vanilla-extract.style/) (VE) and [stylis](https://stylis.js.org/).
 This combination yields a type-checked 0-runtime CSS-in-TS project.
 
+Example:
+
+- styles.css.ts:
+
+  ```tsx
+  import {styled} from 'qwik-styled-ve'
+
+  export const RedText = styled.span`
+  	color: red;
+  `
+  ```
+
+gets converted at build time to
+
+- styles.css.ts.vanilla.css:
+
+  ```css
+  .werasf1 {
+  	color: red;
+  }
+  ```
+
+- styles.css.ts.vanilla.js:
+
+  ```js
+  import './styles.css.ts.vanilla.css'
+  import {styled as _spofw} from 'qwik-styled-vs/real-styled'
+
+  export var RedText = _spofw('span', 'werasf1')
+  ```
+
+`RedText` is a Qwik Lite component ready for use, and the CSS will be included by Qwik automatically.
+
+Type-checking happens automatically thanks to the fact that the source file is a `.ts` file (you can use plain js too) and all helpers have proper typing.
+
 ## Installation
 
 Install the needed NPM modules; they can be dev dependencies because Qwik will bundle them correctly for client and server.
@@ -39,17 +74,16 @@ export default defineConfig(() => {
 
 ## Usage
 
-This library is complementary to VE, so head over to the [VE docs](https://vanilla-extract.style/documentation/getting-started#create-a-style) to learn the basics.
+This library is complementary to vanilla-extract, so head over to the [vanilla-extract docs](https://vanilla-extract.style/documentation/getting-started#create-a-style) to learn the basics.
 
 ### styled
 
-You use `styled` to create Qwik components that you can import. This uses the same configuration objects as the VE `style()` function:
+You use `styled` to create Qwik components that you can import. This uses the same configuration objects as the vanilla-extract `style()` function:
 
 header.css.ts:
 
 ```ts
-import {style} from '@vanilla-extract/css'
-import {styled} from 'qwik-styled-ve'
+import {style, styled} from 'qwik-styled-ve'
 
 // Local classname that makes things fancy
 export const fancy = style({})
@@ -86,13 +120,12 @@ export default component$(() => {
 
 ### css
 
-There's also `css` template string helper to convert CSS syntax to VE syntax. You can use it anywhere that accepts VE style objects:
+There's also `css` template string helper to convert CSS syntax to vanilla-extract syntax. You can use it anywhere that accepts vanilla-extract style objects:
 
 header.css.ts:
 
 ```ts
-import {style} from '@vanilla-extract/css'
-import {styled, css} from 'qwik-styled-ve'
+import {style, styled, css} from 'qwik-styled-ve'
 
 // Local classname
 export const fancy = style({})
@@ -108,13 +141,35 @@ export const Header = styled.h1(css`
 `)
 ```
 
+### combined
+
+Both `style` and `styled` can be used as tagged template functions, so the above can also be written as
+
+header.css.ts:
+
+```ts
+import {style, styled, css} from 'qwik-styled-ve'
+
+export const Fancy = style``
+
+// Header: a Qwik Lite Component
+export const Header = styled.h1`
+	padding: 0.5em;
+	border: thin solid var(--color-hint);
+	border-bottom: none;
+	${fancy} &, ${fancy}&: {
+		background: gold;
+	}
+`
+```
+
 ## Migrating from Styled Components
 
 Several features are not supported because they are impossible as 0-runtime, or don't make sense in Qwik.
 
-### Function interpolation
+### Replacing function interpolation
 
-Instead of embedding a function in your CSS like `` `color: ${p => p.error ? 'red':'black'}` ``, you should use extra classes, inline styles, CSS variables or a combination. Any option is easy to implement with Qwik.
+Instead of embedding a function in your CSS like `` `color: ${p => p.error ? 'red':'black'}` ``, you should use extra classes, inline styles, CSS variables, or a combination thereof. Any option is easy to implement with Qwik.
 
 ```tsx
 import {Text, showError} from './component.css'
@@ -127,29 +182,31 @@ import {Text, showError} from './component.css'
 // Style object
 <Text style={{color: hasError ? 'red' : 'black'}}>text</Text>
 // CSS variable that you use in your CSS
-<Text style={{"--text-color": hasError ? 'red' : 'black'}}>text</Text>
+<Text style={{"--color-hint": hasError ? 'red' : 'black'}}>text</Text>
 ```
 
-### Themes
+### Replacing themes
 
 Use CSS variables instead. They are supported in all relevant browsers.
 
+You can also import any code you like to create the CSS at build time, there are no restrictions, go wild!
+
+Vanilla-extract also has nice helper projects for this purpose, [Sprinkles](https://vanilla-extract.style/documentation/packages/sprinkles/) and [Recipes](https://vanilla-extract.style/documentation/packages/sprinkles/).
+
 ### Extending a component
 
-Instead of using an existing component to build on, compose the styles that VE generates:
+A QwikStyledComponent can be passed to `style` and `styled` to
+Instead of using an existing component to build on, compose the styles that vanilla-extract generates:
 
 ```ts
-import {style} from '@vanilla-extract/css'
 import {styled, css} from 'qwik-styled-ve'
 
-const button = style(
-	css`
-		text-size: 3em;
-	`
-)
+const Button = styled.button`
+	text-size: 3em;
+`
 
 export const RedButton = styled.button([
-	button,
+	Button,
 	css`
 		background-color: red;
 	`,
