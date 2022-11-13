@@ -8,10 +8,10 @@ This combination yields a type-checked 0-runtime CSS-in-TS project.
 Install the needed NPM modules; they can be dev dependencies because Qwik will bundle them correctly for client and server.
 
 ```sh
-npm i -D qwik-styled-ve @vanilla-extract/css @vanilla-extract/vite-plugin
+npm i -D qwik-styled-ve @vanilla-extract/css
 ```
 
-Then, add the VE plugin to your `vite.config.ts`, for example:
+Then, add the Vite plugin to your `vite.config.ts`, for example:
 
 ```js
 import {defineConfig} from 'vite'
@@ -19,11 +19,7 @@ import {qwikVite} from '@builder.io/qwik/optimizer'
 import {qwikCity} from '@builder.io/qwik-city/vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 // ---------------- ADD THIS ----------------
-import {vanillaExtractPlugin} from '@vanilla-extract/vite-plugin'
-
-// ---------------- ADD THIS ----------------
-// Workaround until https://github.com/vanilla-extract-css/vanilla-extract/pull/895 is merged
-process.env.VITE_RSC_BUILD = 'true'
+import {qwikStyledVEPlugin} from 'qwik-styled-ve'
 
 export default defineConfig(() => {
 	const cfg = {
@@ -34,7 +30,7 @@ export default defineConfig(() => {
 			tsconfigPaths(),
 			// ---------------- ADD THIS ----------------
 			// This has to come somewhere after qwikVite, or the exports break
-			vanillaExtractPlugin(),
+			qwikStyledVEPlugin(),
 		],
 	}
 	return cfg

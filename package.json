@@ -62,5 +62,8 @@
   "peerDependencies": {
     "@builder.io/qwik": "^0.12.1",
     "@vanilla-extract/css": "^1.9.1"
+  },
+  "dependencies": {
+    "@vanilla-extract/vite-plugin": "^3.6.1"
   }
 }
