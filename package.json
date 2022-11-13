@@ -38,7 +38,8 @@
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "lint": "eslint .",
-    "test": "vitest",
+    "test": "vitest run",
+    "test.watch": "vitest watch",
     "release": "np",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
