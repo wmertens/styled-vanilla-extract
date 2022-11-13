@@ -1,0 +1,94 @@
+name: Node CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  # This job prevents duplicate jobs and doc-only changes
+  verify:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+
+    # Map a step output to a job output
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          # https://github.com/marketplace/actions/skip-duplicate-actions#skip-concurrent-workflow-runs
+          concurrent_skipping: same_content_newer
+          paths_ignore: '["**/*.md"]'
+
+  lint:
+    if: ${{ needs.verify.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    env:
+      BASE_REF: ${{ github.base_ref }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          clean: false
+          # Make git diff HEAD^ work
+          fetch-depth: 2
+      # For diffing
+      - run: git fetch --depth=1 origin ${{ github.base_ref }}
+
+      - run: corepack enable
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: corepack npm ci
+
+      - name: lint
+        run: npm run lint
+        shell: bash
+        env:
+          GH_EVENT: ${{ github.event_name }}
+
+  test:
+    if: ${{ needs.verify.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    env:
+      BASE_REF: ${{ github.base_ref }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          clean: false
+          # Make git diff HEAD^ work
+          fetch-depth: 2
+      # For diffing
+      - run: git fetch --depth=1 origin ${{ github.base_ref }}
+
+      - run: corepack enable
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: corepack npm ci
+
+      # Note, these only check changed files
+      - name: tests
+        run: npm test
+        # For pipefail
+        shell: bash
+        env:
+          GH_EVENT: ${{ github.event_name }}

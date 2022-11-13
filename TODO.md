@@ -1,5 +1,4 @@
 # TODO
 
-- unit tests. Vitest?
-- support ` style``  ` and ` styled.ul``  `
+- check variable support
 - default props

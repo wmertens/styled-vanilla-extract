@@ -120,6 +120,13 @@ export type Tags =
 	| 'wbr'
 	| 'webview'
 
+export type QwikStyledComponent<Tag extends Tags = 'div'> = FunctionComponent<
+	QwikIntrinsicElements[Tag]
+> & {className: string} & string
+
+export const isStyled = (o: any): o is QwikStyledComponent =>
+	typeof o === 'function' && 'className' in o
+
 export const styled = <Tag extends Tags>(
 	Tag: Tag,
 	myClassName: string
@@ -149,5 +156,6 @@ export const styled = <Tag extends Tags>(
 		return <Tag {...props} class={classes ?? myClassName} />
 	}
 	Lite.className = myClassName
+	Lite.toString = () => myClassName
 	return Lite
 }
