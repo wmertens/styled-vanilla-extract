@@ -11,7 +11,7 @@ Example:
   import {styled} from 'qwik-styled-ve'
 
   export const RedText = styled.span`
-  	color: red;
+    color: red;
   `
   ```
 
@@ -21,7 +21,7 @@ gets converted at build time to
 
   ```css
   .werasf1 {
-  	color: red;
+    color: red;
   }
   ```
 
@@ -57,18 +57,18 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import {qwikStyledVEPlugin} from 'qwik-styled-ve'
 
 export default defineConfig(() => {
-	const cfg = {
-		build: {sourcemap: true},
-		plugins: [
-			qwikCity(),
-			qwikVite(),
-			tsconfigPaths(),
-			// ---------------- ADD THIS ----------------
-			// This has to come somewhere after qwikVite, or the exports break
-			qwikStyledVEPlugin(),
-		],
-	}
-	return cfg
+  const cfg = {
+    build: {sourcemap: true},
+    plugins: [
+      qwikCity(),
+      qwikVite(),
+      tsconfigPaths(),
+      // ---------------- ADD THIS ----------------
+      // This has to come somewhere after qwikVite, or the exports break
+      qwikStyledVEPlugin(),
+    ],
+  }
+  return cfg
 })
 ```
 
@@ -90,14 +90,14 @@ export const fancy = style({})
 
 // Header: a Qwik Lite Component
 export const Header = styled.header({
-	padding: '0.5em',
-	border: 'thin solid var(--color-hint)',
-	borderBottom: 'none',
-	selectors: {
-		[`${fancy} &, ${fancy}&`]: {
-			background: 'gold',
-		},
-	},
+  padding: '0.5em',
+  border: 'thin solid var(--color-hint)',
+  borderBottom: 'none',
+  selectors: {
+    [`${fancy} &, ${fancy}&`]: {
+      background: 'gold',
+    },
+  },
 })
 ```
 
@@ -107,14 +107,14 @@ header.tsx:
 import {Header, fancy} from './header.css'
 
 export default component$(() => {
-	// do header stuff
-	return (
-		<Header class={isFancy && fancy}>
-			Header, possibly fancy.
-			<br />
-			The classname it uses is {Header.className}.
-		</Header>
-	)
+  // do header stuff
+  return (
+    <Header class={isFancy && fancy}>
+      Header, possibly fancy.
+      <br />
+      The classname it uses is {Header.className}.
+    </Header>
+  )
 })
 ```
 
@@ -132,12 +132,12 @@ export const fancy = style({})
 
 // Header: a Qwik Lite Component
 export const Header = styled.h1(css`
-	padding: 0.5em;
-	border: thin solid var(--color-hint);
-	border-bottom: none;
-	${fancy} &, ${fancy}&: {
-		background: gold;
-	}
+  padding: 0.5em;
+  border: thin solid var(--color-hint);
+  border-bottom: none;
+  ${fancy} &, ${fancy}&: {
+    background: gold;
+  }
 `)
 ```
 
@@ -154,12 +154,12 @@ export const Fancy = style``
 
 // Header: a Qwik Lite Component
 export const Header = styled.h1`
-	padding: 0.5em;
-	border: thin solid var(--color-hint);
-	border-bottom: none;
-	${fancy} &, ${fancy}&: {
-		background: gold;
-	}
+  padding: 0.5em;
+  border: thin solid var(--color-hint);
+  border-bottom: none;
+  ${fancy} &, ${fancy}&: {
+    background: gold;
+  }
 `
 ```
 
@@ -202,14 +202,14 @@ Instead of using an existing component to build on, compose the styles that vani
 import {styled, css} from 'qwik-styled-ve'
 
 const Button = styled.button`
-	text-size: 3em;
+  text-size: 3em;
 `
 
 export const RedButton = styled.button([
-	Button,
-	css`
-		background-color: red;
-	`,
+  Button,
+  css`
+    background-color: red;
+  `,
 ])
 ```
 

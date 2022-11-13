@@ -17,7 +17,9 @@ describe('css', () => {
 				color: red;
 			`,
 		])
-		expect(Tag1.className).toMatchInlineSnapshot('"testFile__fspbdo1 testFile__fspbdo0"')
+		expect(Tag1.className).toMatchInlineSnapshot(
+			'"testFile__fspbdo1 testFile__fspbdo0"'
+		)
 		const out = css`
 			${Tag1} & {
 				background-color: black;
