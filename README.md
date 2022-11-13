@@ -3,6 +3,8 @@
 This provides a [Styled-Components](https://styled-components.com/)-like (SC) API in Qwik, using [vanilla-extract](https://vanilla-extract.style/) (VE) and [stylis](https://stylis.js.org/).
 This combination yields a type-checked 0-runtime CSS-in-TS project.
 
+**Try it out now on 👉 [StackBlitz](https://stackblitz.com/edit/qwik-styled-ve-playground) 👈.**
+
 Example:
 
 - styles.css.ts:
