@@ -21,6 +21,7 @@ export const resolvePostcssConfig = async (
 		delete options.plugins
 		return {
 			options,
+			// @ts-ignore
 			plugins: inlineOptions.plugins || [],
 		}
 	} else {
