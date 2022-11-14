@@ -6,4 +6,4 @@ export {css} from './css'
  * - You always need to configure Vite
  * - We may need to alter the plugin later
  */
-export {vanillaExtractPlugin as qwikStyledVEPlugin} from '@vanilla-extract/vite-plugin'
+export {vanillaExtractPlugin as qwikStyledVEPlugin} from './vite-plugin'
