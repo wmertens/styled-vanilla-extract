@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 
 import type {Plugin, ResolvedConfig, ViteDevServer} from 'vite'
 import {normalizePath} from 'vite'
@@ -19,6 +19,7 @@ const styleUpdateEvent = (fileId: string) =>
 
 const virtualExtCss = '.vanilla.css'
 const virtualExtJs = '.vanilla.js'
+const defaultExportRE = /^\s*export default\s.*$/m
 
 interface Options {
 	identifiers?: IdentifierOption
@@ -175,20 +176,17 @@ export function vanillaExtractPlugin({
 				}
 			}
 
-			const output = await processVanillaFile({
+			const hasDefaultExport = defaultExportRE.test(code)
+			let cssSource
+			let output = await processVanillaFile({
 				source,
 				filePath: validId,
 				identOption,
-				serializeVirtualCssPath: async ({fileScope, source}) => {
-					const rootRelativeId = `${fileScope.filePath}${
-						config.command === 'build' || (ssr && forceEmitCssInSsrBuild)
-							? virtualExtCss
-							: virtualExtJs
-					}`
-					const absoluteId = getAbsoluteVirtualFileId(rootRelativeId)
+				serializeVirtualCssPath: async args => {
+					const {fileScope, source} = args
+					cssSource = source
 
-					let cssSource = source
-
+					// TODO It looks like Vite does this already? Should this go?
 					if (postCssConfig) {
 						const postCssResult = await (await import('postcss'))
 							.default(postCssConfig.plugins)
@@ -200,6 +198,17 @@ export function vanillaExtractPlugin({
 
 						cssSource = postCssResult.css
 					}
+
+					if (hasDefaultExport)
+						// We emit the css only in the default export, no import
+						return ''
+
+					const rootRelativeId = `${fileScope.filePath}${
+						config.command === 'build' || (ssr && forceEmitCssInSsrBuild)
+							? virtualExtCss
+							: virtualExtJs
+					}`
+					const absoluteId = getAbsoluteVirtualFileId(rootRelativeId)
 
 					if (
 						server &&
@@ -233,6 +242,12 @@ export function vanillaExtractPlugin({
 					return `import "${rootRelativeId}";`
 				},
 			})
+
+			if (hasDefaultExport)
+				output = output.replace(
+					defaultExportRE,
+					`export default ${JSON.stringify(cssSource)};`
+				)
 
 			return {
 				code: output,

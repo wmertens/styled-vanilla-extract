@@ -13,7 +13,7 @@ export default defineConfig(() => {
 		build: {
 			target: 'es2020',
 			lib: {
-				entry: ['./src/index.ts', './src/real-styled.tsx'],
+				entry: ['./src/index.ts', './src/real-styled.tsx', './src/vite.ts'],
 				formats: ['es', 'cjs'],
 			},
 			rollupOptions: {

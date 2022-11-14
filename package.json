@@ -15,7 +15,12 @@
       "require": "./lib/index.cjs",
       "types": "./lib-types/index.d.ts"
     },
-    "./lib/real-styled.js": {
+    "./vite": {
+      "import": "./lib/vite.js",
+      "require": "./lib/vite.cjs",
+      "types": "./lib-types/vite.d.ts"
+    },
+    "./real-styled": {
       "import": "./lib/real-styled.js",
       "require": "./lib/real-styled.cjs"
     }
