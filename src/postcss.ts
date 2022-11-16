@@ -39,10 +39,12 @@ export const resolvePostcssConfig = async (
 				plugins: postCssConfig.plugins,
 			}
 		} catch (e: any) {
-			if (!/No PostCSS Config found/.test(e.message)) {
-				throw e
-			}
-			return null
+			if (
+				e.code === 'MODULE_NOT_FOUND' ||
+				/No PostCSS Config found/.test(e.message)
+			)
+				return null
+			throw e
 		}
 	}
 }
