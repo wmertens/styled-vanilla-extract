@@ -15,7 +15,12 @@
       "require": "./lib/index.cjs",
       "types": "./lib-types/index.d.ts"
     },
-    "./lib/real-styled.js": {
+    "./vite": {
+      "import": "./lib/vite.js",
+      "require": "./lib/vite.cjs",
+      "types": "./lib-types/vite.d.ts"
+    },
+    "./real-styled": {
       "import": "./lib/real-styled.js",
       "require": "./lib/real-styled.cjs"
     }
@@ -63,9 +68,17 @@
   },
   "peerDependencies": {
     "@builder.io/qwik": "^0.13.1",
-    "@vanilla-extract/css": "^1.9.1"
+    "@vanilla-extract/css": "^1.9.1",
+    "postcss": "^8.3.6",
+    "postcss-load-config": "^3.1.0",
+    "vite": "^3.2.3"
+  },
+  "peerDependenciesMeta": {
+    "postcss": {"optional": true},
+    "postcss-load-config": {"optional": true}
   },
   "dependencies": {
-    "@vanilla-extract/vite-plugin": "^3.6.1"
+    "@vanilla-extract/integration": "^6.0.0",
+    "outdent": "^0.8.0"
   }
 }

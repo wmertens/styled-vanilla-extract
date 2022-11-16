@@ -56,7 +56,7 @@ import {qwikVite} from '@builder.io/qwik/optimizer'
 import {qwikCity} from '@builder.io/qwik-city/vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 // ---------------- ADD THIS ----------------
-import {qwikStyledVEPlugin} from 'qwik-styled-ve'
+import {vanillaExtractPlugin} from 'qwik-styled-ve/vite'
 
 export default defineConfig(() => {
   const cfg = {
@@ -67,7 +67,7 @@ export default defineConfig(() => {
       tsconfigPaths(),
       // ---------------- ADD THIS ----------------
       // This has to come somewhere after qwikVite, or the exports break
-      qwikStyledVEPlugin(),
+      vanillaExtractPlugin(),
     ],
   }
   return cfg
@@ -150,7 +150,7 @@ Both `style` and `styled` can be used as tagged template functions, so the above
 header.css.ts:
 
 ```ts
-import {style, styled, css} from 'qwik-styled-ve'
+import {style, styled} from 'qwik-styled-ve'
 
 export const Fancy = style``
 
@@ -164,6 +164,49 @@ export const Header = styled.h1`
   }
 `
 ```
+
+## Only emitting styles you use
+
+By default, the CSS you create will be emitted in a .css file that your html will load.
+
+You can instead get the CSS as a string that you then give to Qwik's `useStyles$()`. To do this, you must have a default export in your definition:
+
+header.css.ts:
+
+```ts
+import {styled} from 'qwik-styled-ve'
+
+// This will be replaced with the CSS
+export default ''
+
+// Header: a Qwik Lite Component
+export const Header = styled.h1`
+  padding: 0.5em;
+  border: thin solid var(--color-hint);
+  border-bottom: none;
+`
+```
+
+Header.tsx:
+
+```tsx
+import {component$, useStyles$} from '@builder.io/qwik'
+import style, {Header} from './header.css'
+
+export default component$(() => {
+  useStyles$(style)
+
+  return <Header>I'm styled!</Header>
+})
+```
+
+This has the advantage that your initial HTML includes only the styles you actually use, and they are inline, which reduces lag.
+If you are building a Single Page Application, this is most likely what you want.
+
+## Notes
+
+- All styles you create in a css.ts file are included in the CSS output. They do not get tree-shaken, unlike the exported identifiers. This is vanilla-extract behavior.
+- Qwik doesn't do hot reloading at the moment. It also has problems with changing .css files. You might have to reload the page manually sometimes to get styles to apply.
 
 ## Migrating from Styled Components
 
