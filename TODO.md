@@ -1,4 +1,4 @@
 # TODO
 
-- check variable support
-- default props
+- /vite export typing???
+- default props on Lite Component maybe

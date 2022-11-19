@@ -19,6 +19,7 @@ const styleUpdateEvent = (fileId: string) =>
 
 const virtualExtCss = '.vanilla.css'
 const virtualExtJs = '.vanilla.js'
+const virtualRE = /.vanilla.(css|js)$/
 const defaultExportRE = /^\s*export default\s.*$/m
 
 interface Options {
@@ -79,6 +80,26 @@ export function vanillaExtractPlugin({
 				forceEmitCssInSsrBuild = true
 			}
 		},
+		// Re-parse .css.ts files when they change
+		async handleHotUpdate({file, modules}) {
+			if (!cssFileFilter.test(file)) return
+			try {
+				const virtualId = `${file}${
+					config.command === 'build' || (config.ssr && forceEmitCssInSsrBuild)
+						? virtualExtCss
+						: virtualExtJs
+				}`
+				const virtuals = server.moduleGraph.getModulesByFile(virtualId)
+				virtuals?.forEach(m => server.moduleGraph.invalidateModule(m))
+				// load new CSS
+				await server.ssrLoadModule(file)
+				return [...modules, ...(virtuals || [])]
+			} catch (e) {
+				console.error(e)
+				throw e
+			}
+		},
+		// Convert .vanilla.(js|css) URLs to their absolute version
 		resolveId(source) {
 			const [validId, query] = source.split('?')
 			if (!validId.endsWith(virtualExtCss) && !validId.endsWith(virtualExtJs)) {
@@ -91,19 +112,23 @@ export function vanillaExtractPlugin({
 				? source
 				: getAbsoluteVirtualFileId(validId)
 
-			// There should always be an entry in the `cssMap` here.
-			// The only valid scenario for a missing one is if someone had written
-			// a file in their app using the .vanilla.js/.vanilla.css extension
-			if (cssMap.has(absoluteId)) {
-				// Keep the original query string for HMR.
-				return absoluteId + (query ? `?${query}` : '')
-			}
+			// Keep the original query string for HMR.
+			return absoluteId + (query ? `?${query}` : '')
 		},
-		load(id) {
+		// Provide virtual CSS content
+		async load(id) {
 			const [validId] = id.split('?')
 
-			if (!cssMap.has(validId)) {
+			if (!virtualRE.test(validId)) {
 				return
+			}
+
+			if (!cssMap.has(validId)) {
+				// Try to parse the parent
+				const parentId = validId.replace(virtualRE, '')
+				await server.ssrLoadModule(parentId)
+				// Now we should have the CSS
+				if (!cssMap.has(validId)) return
 			}
 
 			const css = cssMap.get(validId)
@@ -117,22 +142,23 @@ export function vanillaExtractPlugin({
 			}
 
 			return outdent`
-        import { injectStyles } from '@vanilla-extract/css/injectStyles';
+				import { injectStyles } from '@vanilla-extract/css/injectStyles';
 
-        const inject = (css) => injectStyles({
-          fileScope: ${JSON.stringify({filePath: validId})},
-          css
-        });
+				const inject = (css) => injectStyles({
+				fileScope: ${JSON.stringify({filePath: validId})},
+				css
+				});
 
-        inject(${JSON.stringify(css)});
+				inject(${JSON.stringify(css)});
 
-        if (import.meta.hot) {
-          import.meta.hot.on('${styleUpdateEvent(validId)}', (css) => {
-            inject(css);
-          });
-        }
-      `
+				if (import.meta.hot) {
+					import.meta.hot.on('${styleUpdateEvent(validId)}', (css) => {
+						inject(css);
+					});
+				}
+			`
 		},
+		// Side-effect: If this results in new CSS, it will send HMR event
 		async transform(code, id, ssrParam) {
 			const [validId] = id.split('?')
 
