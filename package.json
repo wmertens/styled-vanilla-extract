@@ -8,17 +8,17 @@
   "main": "./lib/index.cjs",
   "qwik": "./lib/index.js",
   "module": "./lib/index.js",
-  "types": "./lib-types/src/index.d.ts",
+  "types": "./lib-types/index.d.ts",
   "exports": {
     "./qwik": {
       "import": "./lib/index.js",
       "require": "./lib/index.cjs",
-      "types": "./lib-types/src/index.d.ts"
+      "types": "./lib-types/index.d.ts"
     },
     "./vite": {
       "import": "./lib/vite.js",
       "require": "./lib/vite.cjs",
-      "types": "./lib-types/src/vite.d.ts"
+      "types": "./lib-types/vite.d.ts"
     },
     "./qwik-styled": {
       "import": "./lib/qwik-styled.js",
@@ -47,7 +47,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test.watch": "vitest watch",
-    "release": "np",
+    "release": "npm run build && np",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
   },

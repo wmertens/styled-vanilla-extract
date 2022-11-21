@@ -4,12 +4,12 @@
 	"name": "styled-vanilla-extract/qwik",
 	"main": "../lib/index.cjs",
 	"module": "../lib/index.js",
-	"types": "../lib-types/src/index.d.ts",
+	"types": "../lib-types/index.d.ts",
 	"exports": {
 		".": {
 		  "import": "../lib/index.js",
 		  "require": "../lib/index.cjs",
-		  "types": "../lib-types/src/index.d.ts"
+		  "types": "../lib-types/index.d.ts"
 		}
 	}
 }
