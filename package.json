@@ -1,6 +1,6 @@
 {
   "name": "styled-vanilla-extract",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
   "repository": {
     "url": "https://github.com/wmertens/styled-vanilla-extract"
