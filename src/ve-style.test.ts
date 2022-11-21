@@ -2,7 +2,7 @@ import {FunctionComponent} from '@builder.io/qwik'
 import {assertType, describe, expect, expectTypeOf, it} from 'vitest'
 import {style, styled} from './ve-style'
 import {setFileScope} from '@vanilla-extract/css/fileScope'
-import {QwikStyledComponent} from './real-styled'
+import {QwikStyledComponent} from './qwik-styled'
 import {veClassRE, veMultiClassRE} from './css'
 
 // Make VE happy about running in this file

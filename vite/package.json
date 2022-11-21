@@ -1,0 +1,15 @@
+{
+	"private": false,
+	"type": "module",
+	"name": "styled-extract/vite",
+	"main": "../lib/vite.cjs",
+	"module": "../lib/vite.js",
+	"types": "../lib-types/src/vite.d.ts",
+	"exports": {
+		".": {
+		  "import": "../lib/vite.js",
+		  "require": "../lib/vite.cjs",
+		  "types": "../lib-types/src/vite.d.ts"
+		}
+	}
+}

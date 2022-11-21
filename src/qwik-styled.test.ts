@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {isStyled, styled} from './real-styled'
+import {isStyled, styled} from './qwik-styled'
 
 describe('isStyled', () => {
 	it('should detect Styled functions', () => {

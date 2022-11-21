@@ -1,4 +1,4 @@
-import {FunctionComponent, QwikIntrinsicElements} from '@builder.io/qwik'
+import {FunctionComponent, QwikIntrinsicElements, jsx} from '@builder.io/qwik'
 
 // Copied from HtmlIntrinsiceElements because I couldn't make `keyof QwikIntrinsicElements` work well
 export type Tags =
@@ -153,8 +153,13 @@ export const styled = <Tag extends Tags>(
 		}
 		check(extraClassName)
 		check(extraClass)
-		return <Tag {...props} class={classes ?? myClassName} />
+		return jsx(
+			Tag,
+			// @ts-ignore
+			{...props, className: classes ?? myClassName}
+		)
 	}
+	// To allow interpolation
 	Lite.className = myClassName
 	Lite.toString = () => myClassName
 	return Lite

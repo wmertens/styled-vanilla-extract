@@ -11,7 +11,7 @@ import {
 	QwikStyledComponent,
 	styled as realStyled,
 	Tags,
-} from './real-styled'
+} from './qwik-styled'
 
 type StyledParam =
 	| StyleRule
@@ -39,7 +39,7 @@ export const styled: StyledProxy = new Proxy({} as StyledProxy, {
 			const Lite = realStyled(tag, className)
 			// This tells VE how to recreate Lite in the compiled CSS
 			addFunctionSerializer(Lite, {
-				importPath: 'qwik-styled-ve/real-styled',
+				importPath: 'styled-extract/qwik-styled',
 				importName: 'styled',
 				// @ts-ignore
 				args: [tag, className],

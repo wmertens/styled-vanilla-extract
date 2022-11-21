@@ -1,28 +1,28 @@
 {
-  "name": "qwik-styled-ve",
+  "name": "styled-extract",
   "version": "0.3.2",
   "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
   "repository": {
-    "url": "https://github.com/wmertens/qwik-styled-ve"
+    "url": "https://github.com/wmertens/styled-extract"
   },
   "main": "./lib/index.cjs",
   "qwik": "./lib/index.js",
   "module": "./lib/index.js",
-  "types": "./lib-types/index.d.ts",
+  "types": "./lib-types/src/index.d.ts",
   "exports": {
-    ".": {
+    "./qwik": {
       "import": "./lib/index.js",
       "require": "./lib/index.cjs",
-      "types": "./lib-types/index.d.ts"
+      "types": "./lib-types/src/index.d.ts"
     },
     "./vite": {
       "import": "./lib/vite.js",
       "require": "./lib/vite.cjs",
-      "types": "./lib-types/vite.d.ts"
+      "types": "./lib-types/src/vite.d.ts"
     },
-    "./real-styled": {
-      "import": "./lib/real-styled.js",
-      "require": "./lib/real-styled.cjs"
+    "./qwik-styled": {
+      "import": "./lib/qwik-styled.js",
+      "require": "./lib/qwik-styled.cjs"
     }
   },
   "files": [
