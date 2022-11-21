@@ -18,7 +18,10 @@ type StyledParam =
 	| (StyleRule | QwikStyledComponent | ClassNames)[]
 	| TemplateStringsArray
 type StyledProxy = {
-	[tag in Tags]: (cssOrClassList: StyledParam) => QwikStyledComponent<tag>
+	[tag in Tags]: (
+		cssOrClassList: StyledParam,
+		...rest: any[]
+	) => QwikStyledComponent<tag>
 }
 
 export const style = (cssArg: StyledParam, ...rest: any[]) => {
