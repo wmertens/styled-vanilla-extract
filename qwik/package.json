@@ -1,7 +1,7 @@
 {
 	"private": false,
 	"type": "module",
-	"name": "styled-extract/qwik",
+	"name": "styled-vanilla-extract/qwik",
 	"main": "../lib/index.cjs",
 	"module": "../lib/index.js",
 	"types": "../lib-types/src/index.d.ts",

@@ -3,14 +3,14 @@
 This provides a [Styled-Components](https://styled-components.com/)-like (SC) API for Qwik, using [vanilla-extract](https://vanilla-extract.style/) (VE) and [stylis](https://stylis.js.org/).
 This combination yields a type-checked 0-runtime CSS-in-TS project.
 
-**Try it out now on 👉 [StackBlitz](https://stackblitz.com/edit/styled-extract-playground) 👈.**
+**Try it out now on 👉 [StackBlitz](https://stackblitz.com/edit/styled-vanilla-extract-playground) 👈.**
 
 Example:
 
 - styles.css.ts:
 
   ```tsx
-  import {styled} from 'styled-extract/qwik'
+  import {styled} from 'styled-vanilla-extract/qwik'
 
   export const RedText = styled.span`
     color: red;
@@ -31,7 +31,7 @@ gets converted at build time to
 
   ```js
   import './styles.css.ts.vanilla.css'
-  import {styled as _spofw} from 'styled-extract/qwik-styled'
+  import {styled as _spofw} from 'styled-vanilla-extract/qwik-styled'
 
   export var RedText = _spofw('span', 'werasf1')
   ```
@@ -45,7 +45,7 @@ Type-checking happens automatically thanks to the fact that the source file is a
 Install the needed NPM modules; they can be dev dependencies because Qwik will bundle them correctly for client and server.
 
 ```sh
-npm i -D styled-extract @vanilla-extract/css
+npm i -D styled-vanilla-extract @vanilla-extract/css
 ```
 
 Then, add the Vite plugin to your `vite.config.ts`, for example:
@@ -56,7 +56,7 @@ import {qwikVite} from '@builder.io/qwik/optimizer'
 import {qwikCity} from '@builder.io/qwik-city/vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 // ---------------- ADD THIS ----------------
-import {vanillaExtractPlugin} from 'styled-extract/vite'
+import {vanillaExtractPlugin} from 'styled-vanilla-extract/vite'
 
 export default defineConfig(() => {
   const cfg = {
@@ -85,7 +85,7 @@ You use `styled` to create Qwik components that you can import. This uses the sa
 header.css.ts:
 
 ```ts
-import {style, styled} from 'styled-extract/qwik'
+import {style, styled} from 'styled-vanilla-extract/qwik'
 
 // Local classname that makes things fancy
 export const fancy = style({})
@@ -127,7 +127,7 @@ There's also `css` template string helper to convert CSS syntax to vanilla-extra
 header.css.ts:
 
 ```ts
-import {style, styled, css} from 'styled-extract/qwik'
+import {style, styled, css} from 'styled-vanilla-extract/qwik'
 
 // Local classname
 export const fancy = style({})
@@ -150,7 +150,7 @@ Both `style` and `styled` can be used as tagged template functions, so the above
 header.css.ts:
 
 ```ts
-import {style, styled} from 'styled-extract/qwik'
+import {style, styled} from 'styled-vanilla-extract/qwik'
 
 export const Fancy = style``
 
@@ -174,7 +174,7 @@ You can instead get the CSS as a string that you then give to Qwik's `useStyles$
 header.css.ts:
 
 ```ts
-import {styled} from 'styled-extract/qwik'
+import {styled} from 'styled-vanilla-extract/qwik'
 
 // This will be replaced with the CSS
 export default ''
@@ -244,7 +244,7 @@ A QwikStyledComponent can be passed to `style` and `styled` to
 Instead of using an existing component to build on, compose the styles that vanilla-extract generates:
 
 ```ts
-import {styled, css} from 'styled-extract'
+import {styled, css} from 'styled-vanilla-extract'
 
 const Button = styled.button`
   text-size: 3em;

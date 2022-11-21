@@ -39,7 +39,7 @@ export const styled: StyledProxy = new Proxy({} as StyledProxy, {
 			const Lite = realStyled(tag, className)
 			// This tells VE how to recreate Lite in the compiled CSS
 			addFunctionSerializer(Lite, {
-				importPath: 'styled-extract/qwik-styled',
+				importPath: 'styled-vanilla-extract/qwik-styled',
 				importName: 'styled',
 				// @ts-ignore
 				args: [tag, className],
