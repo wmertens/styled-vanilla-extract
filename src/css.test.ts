@@ -2,6 +2,7 @@ import {describe, it, expect} from 'vitest'
 import {setFileScope} from '@vanilla-extract/css/fileScope'
 import {css} from './css'
 import {styled} from './ve-style'
+import {createVar} from '@vanilla-extract/css'
 
 // Make VE happy about running in this file
 setFileScope('src/testFile.css.ts', 'testPackage')
@@ -32,6 +33,20 @@ describe('css', () => {
 			      "background-color": "black",
 			    },
 			  },
+			}
+		`)
+	})
+
+	it('should allow variables', () => {
+		const myVar = createVar()
+		const out = css`
+			${myVar}: black;
+			color: ${myVar};
+		`
+		expect(out).toMatchInlineSnapshot(`
+			{
+			  "--fspbdo2": "black",
+			  "color": "var(--fspbdo2)",
 			}
 		`)
 	})
