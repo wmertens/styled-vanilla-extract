@@ -1,11 +1,12 @@
-import {describe, it, expect} from 'vitest'
-import {setFileScope} from '@vanilla-extract/css/fileScope'
+import {describe, it, expect, beforeEach, afterEach} from 'vitest'
+import {endFileScope, setFileScope} from '@vanilla-extract/css/fileScope'
 import {css} from './css'
-import {styled} from './ve-style'
+import {style, styled} from './ve-style'
 import {createVar} from '@vanilla-extract/css'
 
 // Make VE happy about running in this file
-setFileScope('src/testFile.css.ts', 'testPackage')
+beforeEach(() => setFileScope('src/testFile.css.ts', 'testPackage'))
+afterEach(() => endFileScope())
 
 describe('css', () => {
 	it('should interpolate QSC', () => {
@@ -45,8 +46,32 @@ describe('css', () => {
 		`
 		expect(out).toMatchInlineSnapshot(`
 			{
-			  "--fspbdo2": "black",
-			  "color": "var(--fspbdo2)",
+			  "--fspbdo0": "black",
+			  "color": "var(--fspbdo0)",
+			}
+		`)
+	})
+
+	it('should interpolate classLists', () => {
+		const n1 = style``
+		const n2 = style([n1, {}])
+		expect(css`
+			${n1} {
+				color: red;
+			}
+			${n2} {
+				color: blue;
+			}
+		`).toMatchInlineSnapshot(`
+			{
+			  "selectors": {
+			    ".testFile__fspbdo0": {
+			      "color": "red",
+			    },
+			    ".testFile__fspbdo1": {
+			      "color": "blue",
+			    },
+			  },
 			}
 		`)
 	})

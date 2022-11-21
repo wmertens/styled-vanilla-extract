@@ -3,6 +3,7 @@ import {compile} from 'stylis'
 
 export const veClassRE = /^[a-zA-Z0-9_./]*[a-z0-9]{6}\d+$/
 export const veMultiClassRE = /^([a-zA-Z0-9_./]*[a-z0-9]{6}\d+( |$)){2,}/
+export const veAnyClassRE = /^([a-zA-Z0-9_./]*[a-z0-9]{6}\d+( |$))+/
 export const veVariableRE = /^var\(.*\)$/
 
 export const css = (
@@ -11,14 +12,15 @@ export const css = (
 ): StyleRule => {
 	let output = tpl[0]
 	for (let i = 1; i < tpl.length; i++) {
-		// We generate placeholders here and insert the expr during conversion,
-		// and then when encountering selectors changing the classlist to `.${firstClass}`
+		// We generate placeholders here and insert the expr during conversion
+		// so we have context
 		output += `##${i - 1}##`
 		output += tpl[i]
 	}
 
+	// when encountering selectors change the classlist to `.${firstClass}`
 	const classListToSelector = (cl: string) => {
-		if (veMultiClassRE.test(cl)) {
+		if (veAnyClassRE.test(cl)) {
 			const i = cl.indexOf(' ')
 			return `.${i === -1 ? cl : cl.slice(0, i)}`
 		}
