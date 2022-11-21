@@ -18,5 +18,6 @@
 		"isolatedModules": true,
 		"types": ["vite/client"]
 	},
-	"include": ["src"]
+	"include": ["."],
+	"exclude": ["lib", "lib-types"]
 }

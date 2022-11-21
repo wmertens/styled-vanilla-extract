@@ -95,6 +95,7 @@ export function vanillaExtractPlugin({
 				await server.ssrLoadModule(file)
 				return [...modules, ...(virtuals || [])]
 			} catch (e) {
+				// eslint-disable-next-line no-console
 				console.error(e)
 				throw e
 			}
@@ -209,14 +210,13 @@ export function vanillaExtractPlugin({
 				filePath: validId,
 				identOption,
 				serializeVirtualCssPath: async args => {
-					const {fileScope, source} = args
-					cssSource = source
+					cssSource = args.source
 
 					// TODO It looks like Vite does this already? Should this go?
 					if (postCssConfig) {
 						const postCssResult = await (await import('postcss'))
 							.default(postCssConfig.plugins)
-							.process(source, {
+							.process(cssSource, {
 								...postCssConfig.options,
 								from: undefined,
 								map: false,
@@ -229,7 +229,7 @@ export function vanillaExtractPlugin({
 						// We emit the css only in the default export, no import
 						return ''
 
-					const rootRelativeId = `${fileScope.filePath}${
+					const rootRelativeId = `${args.fileScope.filePath}${
 						config.command === 'build' || (ssr && forceEmitCssInSsrBuild)
 							? virtualExtCss
 							: virtualExtJs
@@ -239,7 +239,7 @@ export function vanillaExtractPlugin({
 					if (
 						server &&
 						cssMap.has(absoluteId) &&
-						cssMap.get(absoluteId) !== source
+						cssMap.get(absoluteId) !== cssSource
 					) {
 						const {moduleGraph} = server
 						const [module] = Array.from(
