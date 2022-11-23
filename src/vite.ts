@@ -84,16 +84,19 @@ export function vanillaExtractPlugin({
 		async handleHotUpdate({file, modules}) {
 			if (!cssFileFilter.test(file)) return
 			try {
-				const virtualId = `${file}${
-					config.command === 'build' || (config.ssr && forceEmitCssInSsrBuild)
-						? virtualExtCss
-						: virtualExtJs
-				}`
-				const virtuals = server.moduleGraph.getModulesByFile(virtualId)
-				virtuals?.forEach(m => server.moduleGraph.invalidateModule(m))
+				const virtuals: any[] = []
+				const invalidate = (type: string) => {
+					const found = server.moduleGraph.getModulesByFile(`${file}${type}`)
+					found?.forEach(m => {
+						virtuals.push(m)
+						return server.moduleGraph.invalidateModule(m)
+					})
+				}
+				invalidate(virtualExtCss)
+				invalidate(virtualExtJs)
 				// load new CSS
 				await server.ssrLoadModule(file)
-				return [...modules, ...(virtuals || [])]
+				return [...modules, ...virtuals]
 			} catch (e) {
 				// eslint-disable-next-line no-console
 				console.error(e)
@@ -204,7 +207,7 @@ export function vanillaExtractPlugin({
 			}
 
 			const hasDefaultExport = defaultExportRE.test(code)
-			let cssSource
+			let cssSource, filePath
 			let output = await processVanillaFile({
 				source,
 				filePath: validId,
@@ -225,17 +228,13 @@ export function vanillaExtractPlugin({
 						cssSource = postCssResult.css
 					}
 
-					if (hasDefaultExport)
-						// We emit the css only in the default export, no import
-						return ''
-
-					const rootRelativeId = `${args.fileScope.filePath}${
+					;({filePath} = args.fileScope)
+					const rootRelativeId = `${filePath}${
 						config.command === 'build' || (ssr && forceEmitCssInSsrBuild)
 							? virtualExtCss
 							: virtualExtJs
 					}`
 					const absoluteId = getAbsoluteVirtualFileId(rootRelativeId)
-
 					if (
 						server &&
 						cssMap.has(absoluteId) &&
@@ -263,6 +262,11 @@ export function vanillaExtractPlugin({
 
 					cssMap.set(absoluteId, cssSource)
 
+					if (hasDefaultExport)
+						// We emit the css only in the default export
+						// so no import-giving-side-effects
+						return ''
+
 					// We use the root relative id here to ensure file contents (content-hashes)
 					// are consistent across build machines
 					return `import "${rootRelativeId}";`
@@ -270,13 +274,16 @@ export function vanillaExtractPlugin({
 			})
 
 			if (hasDefaultExport)
+				// We re-export to allow better tree shaking
 				output = output.replace(
 					defaultExportRE,
-					`export default ${JSON.stringify(cssSource)};`
+					`export {default as default} from '${filePath}${virtualExtCss}?inline';`
 				)
 
 			return {
 				code: output,
+				// importing a .css file has side effects
+				moduleSideEffects: !hasDefaultExport,
 				map: {mappings: ''},
 			}
 		},
