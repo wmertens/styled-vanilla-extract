@@ -74,6 +74,8 @@ export default defineConfig(() => {
 })
 ```
 
+Then, check if your editor has styled-components support. For example, VS Code has [vscode-styled-components](https://marketplace.visualstudio.com/items?itemName=styled-components.vscode-styled-components).
+
 ## Usage
 
 This library is complementary to vanilla-extract, so head over to the [vanilla-extract docs](https://vanilla-extract.style/documentation/getting-started#create-a-style) to learn the basics.
