@@ -1,4 +1,4 @@
-import type {StyleRule} from '@vanilla-extract/css'
+import {keyframes, StyleRule} from '@vanilla-extract/css'
 import {compile} from 'stylis'
 
 export const veClassRE = /^[a-zA-Z0-9_./]*[a-z0-9]{6}\d+$/
@@ -6,6 +6,20 @@ export const veMultiClassRE = /^([a-zA-Z0-9_./]*[a-z0-9]{6}\d+( |$)){2,}/
 export const veAnyClassRE = /^([a-zA-Z0-9_./]*[a-z0-9]{6}\d+( |$))+/
 export const veVariableRE = /^var\(.*\)$/
 
+const changeAnimName = (rule: StyleRule, name: string, real: string) => {
+	const regex = new RegExp(`\\b${name}\\b`, 'gm')
+	const walk = (obj: Record<string, any>) => {
+		for (const [key, value] of Object.entries(obj)) {
+			if (key === '@keyframes') continue
+			if (key === 'animation' || key === 'animation-name') {
+				obj[key] = Array.isArray(value)
+					? value.map(s => s.replace(regex, real))
+					: value.replace(regex, real)
+			} else if (typeof value === 'object' && !Array.isArray(value)) walk(value)
+		}
+	}
+	walk(rule)
+}
 export const css = (
 	tpl: TemplateStringsArray,
 	...expr: string[]
@@ -91,5 +105,17 @@ export const css = (
 		return style
 	}
 	const compiled = compile(output)
-	return compiledToVE(compiled)
+	const transformed = compiledToVE(compiled)
+	// Post-process for keyframes support
+	if ('@keyframes' in transformed) {
+		// We get an extra "selectors" object in between, get rid of it
+		for (const [name, {selectors: timings}] of Object.entries(
+			transformed['@keyframes'] as {[name: string]: {selectors: any}}
+		)) {
+			const real = keyframes(timings as any, name)
+			changeAnimName(transformed, name, real)
+		}
+		delete transformed['@keyframes']
+	}
+	return transformed
 }

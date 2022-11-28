@@ -75,4 +75,38 @@ describe('css', () => {
 			}
 		`)
 	})
+
+	it('handles keyframes', () => {
+		const s = css`
+			animation: spin 2s;
+			animation-name: spin;
+			@keyframes spin {
+				0% {
+					transform: rotate(0);
+				}
+				100% {
+					transform: rotate(360);
+				}
+			}
+			@keyframes move {
+				from {
+					left: 5%;
+				}
+				to {
+					left: 85%;
+				}
+			}
+
+			animation: 1s move;
+		`
+		expect(s).toMatchInlineSnapshot(`
+			{
+			  "animation": [
+			    "testFile_spin__fspbdo0 2s",
+			    "1s testFile_move__fspbdo1",
+			  ],
+			  "animation-name": "testFile_spin__fspbdo0",
+			}
+		`)
+	})
 })
