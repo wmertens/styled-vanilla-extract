@@ -42,6 +42,12 @@ Type-checking happens automatically thanks to the fact that the source file is a
 
 ## Installation
 
+### Automatically
+
+Run `npx @builder.io/qwik add styled-vanilla-extract`.
+
+### Manually
+
 Install the needed NPM modules; they can be dev dependencies because Qwik will bundle them correctly for client and server.
 
 ```sh
