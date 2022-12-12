@@ -41,6 +41,7 @@ export const resolvePostcssConfig = async (
 		} catch (e: any) {
 			if (
 				e.code === 'MODULE_NOT_FOUND' ||
+				e.code === 'ERR_MODULE_NOT_FOUND' ||
 				/No PostCSS Config found/.test(e.message)
 			)
 				return null
