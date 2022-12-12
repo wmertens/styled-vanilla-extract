@@ -1,9 +1,5 @@
 import {style as realStyle} from '@vanilla-extract/css'
-import type {
-	ClassNames,
-	ComplexStyleRule,
-	StyleRule,
-} from '@vanilla-extract/css/dist/declarations/src/types'
+import type {ComplexStyleRule, StyleRule} from '@vanilla-extract/css'
 import {addFunctionSerializer} from '@vanilla-extract/css/functionSerializer'
 import {css} from './css'
 import {
@@ -12,6 +8,9 @@ import {
 	styled as realStyled,
 	Tags,
 } from './qwik-styled'
+
+// Copy of Vanilla Extract's ClassNames type
+export type ClassNames = string | Array<ClassNames>
 
 type StyledParam =
 	| StyleRule
