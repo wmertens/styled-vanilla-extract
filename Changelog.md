@@ -1,5 +1,11 @@
 # Changes
 
+## v0.5.3
+
+- Support @keyframes inside css
+- Use only `class` attribute and rely on Qwik's merging
+- deprecate `.className` on styled component
+
 ## v0.3.0
 
 - Optionally provide the CSS as a default export when one exists

@@ -29,7 +29,7 @@ export const style = (cssArg: StyledParam, ...rest: any[]) => {
 		// Tagged template
 		cssArg = css(cssArg, ...rest)
 	} else if (Array.isArray(cssArg)) {
-		cssArg = cssArg.map(o => (isStyled(o) ? o.className : o))
+		cssArg = cssArg.map(o => (isStyled(o) ? o.class : o))
 	}
 	return realStyle(cssArg as ComplexStyleRule)
 }
@@ -37,14 +37,14 @@ export const style = (cssArg: StyledParam, ...rest: any[]) => {
 export const styled: StyledProxy = new Proxy({} as StyledProxy, {
 	get<Tag extends Tags>(_this: any, tag: Tag) {
 		return ((...args) => {
-			const className = style(...args)
-			const Lite = realStyled(tag, className)
+			const classes = style(...args)
+			const Lite = realStyled(tag, classes)
 			// This tells VE how to recreate Lite in the compiled CSS
 			addFunctionSerializer(Lite, {
 				importPath: 'styled-vanilla-extract/qwik-styled',
 				importName: 'styled',
 				// @ts-ignore
-				args: [tag, className],
+				args: [tag, classes],
 			})
 
 			return Lite

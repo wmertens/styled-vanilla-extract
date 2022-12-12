@@ -122,22 +122,16 @@ export type Tags =
 
 export type QwikStyledComponent<Tag extends Tags = 'div'> = FunctionComponent<
 	QwikIntrinsicElements[Tag]
-> & {className: string} & string
+> & {class: string} & string
 
 export const isStyled = (o: any): o is QwikStyledComponent =>
-	typeof o === 'function' && 'className' in o
+	typeof o === 'function' && 'class' in o
 
 export const styled = <Tag extends Tags>(
 	Tag: Tag,
 	myClassName: string
-): FunctionComponent<QwikIntrinsicElements[Tag]> => {
-	const Lite = ({
-		class: extraClass,
-		className: extraClassName,
-		...props
-	}: {
-		[x: string]: any
-	}) => {
+): FunctionComponent<QwikIntrinsicElements[Tag]> & {class: string} => {
+	const Lite = ({class: extraClass, ...props}: {[x: string]: any}) => {
 		let classes: string[] | undefined
 		const check = (cl?: string | {[c: string]: boolean}) => {
 			if (!cl) return
@@ -151,16 +145,20 @@ export const styled = <Tag extends Tags>(
 				)
 			else classes.push(cl)
 		}
-		check(extraClassName)
 		check(extraClass)
 		return jsx(
 			Tag,
 			// @ts-ignore
-			{...props, className: classes ?? myClassName}
+			{...props, class: extraClass ? [myClassName, extraClass] : myClassName}
 		)
 	}
 	// To allow interpolation
-	Lite.className = myClassName
+	Lite.class = myClassName
+	// getter for deprecated className
+	Object.defineProperty(Lite, 'className', {
+		get: () => myClassName,
+		enumerable: false,
+	})
 	Lite.toString = () => myClassName
 	return Lite
 }

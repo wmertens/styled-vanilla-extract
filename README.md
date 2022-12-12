@@ -122,7 +122,7 @@ export default component$(() => {
     <Header class={isFancy && fancy}>
       Header, possibly fancy.
       <br />
-      The classname it uses is {Header.className}.
+      The classname it uses is {Header.class}.
     </Header>
   )
 })

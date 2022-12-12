@@ -11,14 +11,14 @@ setFileScope('src/testFile.css.ts', 'testPackage')
 describe('style', () => {
 	it('should accept Styled arguments', () => {
 		const Tag1 = styled.div({color: 'red'})
-		const className = style([Tag1, {color: 'red'}])
-		expect(className).toMatch(veMultiClassRE)
+		const classes = style([Tag1, {color: 'red'}])
+		expect(classes).toMatch(veMultiClassRE)
 	})
 	it('should accept `` for CSS', () => {
-		const className = style`
+		const classes = style`
 			color: red;
 		`
-		expect(className).toMatch(veClassRE)
+		expect(classes).toMatch(veClassRE)
 	})
 })
 
@@ -29,9 +29,9 @@ describe('styled[tag]', () => {
 		assertType<QwikStyledComponent<'span'>>(Tag)
 	})
 
-	it('should have and be a className', () => {
+	it('should have .class and be String class', () => {
 		const Tag = styled.div({})
-		expectTypeOf(Tag.className).toBeString()
+		expectTypeOf(Tag.class).toBeString()
 		expect(String(Tag)).toMatch(veClassRE)
 	})
 
@@ -43,14 +43,14 @@ describe('styled[tag]', () => {
 
 	it('should accept style arguments', () => {
 		const Tag1 = styled.div({color: 'red'})
-		expect(Tag1.className).toMatch(veClassRE)
+		expect(Tag1.class).toMatch(veClassRE)
 		const Tag2 = styled.div([Tag1, {color: 'red'}])
-		expect(Tag2.className).toMatch(veMultiClassRE)
+		expect(Tag2.class).toMatch(veMultiClassRE)
 	})
 	it('should accept `` for CSS', () => {
 		const Tag = styled.div`
 			color: red;
 		`
-		expect(Tag.className).toMatch(veClassRE)
+		expect(Tag.class).toMatch(veClassRE)
 	})
 })
