@@ -5,10 +5,6 @@
   "repository": {
     "url": "https://github.com/wmertens/styled-vanilla-extract"
   },
-  "main": "./lib/index.cjs",
-  "qwik": "./lib/index.js",
-  "module": "./lib/index.js",
-  "types": "./lib-types/index.d.ts",
   "exports": {
     "./qwik": {
       "import": "./lib/index.js",
