@@ -71,7 +71,7 @@
     "@vanilla-extract/css": "^1.9.1",
     "postcss": "^8.3.6",
     "postcss-load-config": "^3.1.0",
-    "vite": "^3.2.3 | ^4"
+    "vite": "^3.2.3 || ^4"
   },
   "peerDependenciesMeta": {
     "postcss": {
