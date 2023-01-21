@@ -122,7 +122,7 @@ export type Tags =
 
 export type QwikStyledComponent<Tag extends Tags = 'div'> = FunctionComponent<
 	QwikIntrinsicElements[Tag]
-> & {class: string} & string
+> & {class: string}
 
 export const isStyled = (o: any): o is QwikStyledComponent =>
 	typeof o === 'function' && 'class' in o
@@ -130,7 +130,7 @@ export const isStyled = (o: any): o is QwikStyledComponent =>
 export const styled = <Tag extends Tags>(
 	Tag: Tag,
 	myClassName: string
-): FunctionComponent<QwikIntrinsicElements[Tag]> & {class: string} => {
+): QwikStyledComponent<Tag> => {
 	const Lite = ({class: extraClass, ...props}: {[x: string]: any}) => {
 		let classes: string[] | undefined
 		const check = (cl?: string | {[c: string]: boolean}) => {
