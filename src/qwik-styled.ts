@@ -122,7 +122,7 @@ export type Tags =
 
 export type QwikStyledComponent<Tag extends Tags = 'div'> = FunctionComponent<
 	QwikIntrinsicElements[Tag]
-> & {class: string} & string
+> & {class: string}
 
 export const isStyled = (o: any): o is QwikStyledComponent =>
 	typeof o === 'function' && 'class' in o
