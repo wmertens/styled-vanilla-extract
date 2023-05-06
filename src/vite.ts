@@ -229,12 +229,17 @@ export function vanillaExtractPlugin({
 					}
 
 					;({filePath} = args.fileScope)
-					const rootRelativeId = `${filePath}${
+					const projectRootRelativeId = `${filePath}${
 						config.command === 'build' || (ssr && forceEmitCssInSsrBuild)
 							? virtualExtCss
 							: virtualExtJs
 					}`
-					const absoluteId = getAbsoluteVirtualFileId(rootRelativeId)
+					const absoluteId = getAbsoluteVirtualFileId(projectRootRelativeId);
+					// using relative path to the workspace root in a posix style
+					const cwdRelativeId =  path.relative(process.cwd(), absoluteId)
+						.split(path.sep)
+						.join(path.posix.sep);
+
 					if (
 						server &&
 						cssMap.has(absoluteId) &&
@@ -269,7 +274,7 @@ export function vanillaExtractPlugin({
 
 					// We use the root relative id here to ensure file contents (content-hashes)
 					// are consistent across build machines
-					return `import "${rootRelativeId}";`
+					return `import "${cwdRelativeId}";`
 				},
 			})
 
