@@ -39,8 +39,7 @@
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
-    "lint": "eslint .",
-    "lint.ci": "lint-staged -q --diff origin/$BASE_REF",
+    "lint": "eslint . && tsc --noEmit && prettier --check .",
     "test": "vitest run",
     "test.watch": "vitest watch",
     "release": "npm run build && np",
@@ -59,7 +58,6 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-qwik": "^1.1.5",
-    "lint-staged": "^13.2.2",
     "np": "^8.0.2",
     "prettier": "^2.8.8",
     "stylis": "^4.2.0",
@@ -93,10 +91,5 @@
   },
   "bugs": {
     "url": "https://github.com/wmertens/styled-vanilla-extract/issues"
-  },
-  "lint-staged": {
-    "*.(md|json)": "prettier --list-different",
-    "*.ts?(x)": "tsc-files --noEmit --allowJs false --checkJs false",
-    "*.[tj]s?(x)": "eslint"
   }
 }

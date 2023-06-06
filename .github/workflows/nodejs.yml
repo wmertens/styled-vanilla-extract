@@ -52,7 +52,7 @@ jobs:
       - run: corepack npm ci
 
       - name: lint
-        run: npm run lint.ci
+        run: npm run lint
         shell: bash
         env:
           GH_EVENT: ${{ github.event_name }}
@@ -87,7 +87,7 @@ jobs:
 
       # Note, these only check changed files
       - name: tests
-        run: npm run test.ci
+        run: npm run test
         # For pipefail
         shell: bash
         env:
