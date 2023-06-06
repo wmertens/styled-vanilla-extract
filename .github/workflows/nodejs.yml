@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   # This job prevents duplicate jobs and doc-only changes
@@ -17,7 +17,7 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
+        uses: fkirc/skip-duplicate-actions@v5.3.0
         with:
           # https://github.com/marketplace/actions/skip-duplicate-actions#skip-concurrent-workflow-runs
           concurrent_skipping: same_content_newer
@@ -52,7 +52,7 @@ jobs:
       - run: corepack npm ci
 
       - name: lint
-        run: npm run lint
+        run: npm run lint.ci
         shell: bash
         env:
           GH_EVENT: ${{ github.event_name }}
@@ -87,7 +87,7 @@ jobs:
 
       # Note, these only check changed files
       - name: tests
-        run: npm test
+        run: npm run test.ci
         # For pipefail
         shell: bash
         env:

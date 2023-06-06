@@ -2,9 +2,9 @@
   "name": "styled-vanilla-extract",
   "version": "0.5.4",
   "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
-  "repository": {
-    "url": "https://github.com/wmertens/styled-vanilla-extract"
-  },
+  "license": "MIT",
+  "type": "module",
+  "types": "./lib-types/index.d.ts",
   "exports": {
     "./qwik": {
       "import": "./lib/index.js",
@@ -19,7 +19,8 @@
     "./qwik-styled": {
       "import": "./lib/qwik-styled.js",
       "require": "./lib/qwik-styled.cjs"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "lib",
@@ -30,8 +31,6 @@
   "engines": {
     "node": ">=15.0.0"
   },
-  "private": false,
-  "type": "module",
   "scripts": {
     "build": "qwik build",
     "build.lib": "vite build --mode lib",
@@ -41,6 +40,7 @@
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "lint": "eslint .",
+    "lint.ci": "lint-staged -q --diff origin/$BASE_REF",
     "test": "vitest run",
     "test.watch": "vitest watch",
     "release": "npm run build && np",
@@ -84,5 +84,17 @@
   "dependencies": {
     "@vanilla-extract/integration": "^6.0.1",
     "outdent": "^0.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wmertens/styled-vanilla-extract.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wmertens/styled-vanilla-extract/issues"
+  },
+  "lint-staged": {
+    "*.(md|json)": "prettier --list-different",
+    "*.ts?(x)": "tsc-files --noEmit --allowJs false --checkJs false",
+    "*.[tj]s?(x)": "eslint"
   }
 }
