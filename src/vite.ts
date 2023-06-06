@@ -234,11 +234,12 @@ export function vanillaExtractPlugin({
 							? virtualExtCss
 							: virtualExtJs
 					}`
-					const absoluteId = getAbsoluteVirtualFileId(projectRootRelativeId);
+					const absoluteId = getAbsoluteVirtualFileId(projectRootRelativeId)
 					// using relative path to the workspace root in a posix style
-					const cwdRelativeId =  path.relative(process.cwd(), absoluteId)
+					const cwdRelativeId = path
+						.relative(process.cwd(), absoluteId)
 						.split(path.sep)
-						.join(path.posix.sep);
+						.join(path.posix.sep)
 
 					if (
 						server &&
