@@ -1,5 +1,7 @@
 import {keyframes, StyleRule} from '@vanilla-extract/css'
 import {compile} from 'stylis'
+import {type QwikStyledComponent} from './qwik-styled'
+import {type ClassNames} from './ve-style'
 
 export const veClassRE = /^[a-zA-Z0-9_./]*[a-z0-9]{6}\d+$/
 export const veMultiClassRE = /^([a-zA-Z0-9_./]*[a-z0-9]{6}\d+( |$)){2,}/
@@ -22,7 +24,7 @@ const changeAnimName = (rule: StyleRule, name: string, real: string) => {
 }
 export const css = (
 	tpl: TemplateStringsArray,
-	...expr: string[]
+	...expr: (StyleRule | QwikStyledComponent | ClassNames)[]
 ): StyleRule => {
 	let output = tpl[0]
 	for (let i = 1; i < tpl.length; i++) {
