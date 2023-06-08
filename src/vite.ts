@@ -1,3 +1,14 @@
+/**
+ * This plugin has hooks that work as follows:
+ * - transform is called on the css.ts file
+ *   - this converts the css to classnames and stores the css in a map.
+ *   - it adds an import for the virtual css.ts.vanilla.css file
+ * - resolveId is called on the virtual css.ts.vanilla.css file
+ *   - this returns the full path to the virtual css.ts.vanilla.css file
+ * - load is called on the virtual css.ts.vanilla.css file
+ *   - this returns the css from the map
+ */
+
 import path from 'node:path'
 
 import type {Plugin, ResolvedConfig, ViteDevServer} from 'vite'
@@ -19,23 +30,40 @@ const styleUpdateEvent = (fileId: string) =>
 
 const virtualExtCss = '.vanilla.css'
 const virtualExtJs = '.vanilla.js'
-const virtualRE = /.vanilla.(css|js)$/
+const virtualRE = /^(?<source>.*?)(?<ext>\.vanilla\.(css|js))?(?<query>\?.*)?$/
+type IdMatch =
+	| {
+			groups: {
+				source: string
+				ext?: string
+				query?: string
+			}
+	  }
+	| undefined
 const defaultExportRE = /^\s*export default\s.*$/m
 
 interface Options {
 	identifiers?: IdentifierOption
+	emitCssInSsr?: boolean
 	esbuildOptions?: CompileOptions['esbuildOptions']
 }
 export function vanillaExtractPlugin({
 	identifiers,
+	emitCssInSsr,
 	esbuildOptions,
 }: Options = {}): Plugin {
 	let config: ResolvedConfig
 	let server: ViteDevServer
 	let postCssConfig: PostCSSConfigResult | null
 	const cssMap = new Map<string, string>()
+	// Qwik handles injecting styles in SSR itself
+	let disableInject = false
+	const cwd = process.cwd()
 
-	let forceEmitCssInSsrBuild: boolean = !!process.env.VITE_RSC_BUILD
+	const hasEmitCssOverride = typeof emitCssInSsr === 'boolean'
+	let resolvedEmitCssInSsr: boolean = hasEmitCssOverride
+		? emitCssInSsr
+		: !!process.env.VITE_RSC_BUILD
 	let packageName: string
 
 	const getAbsoluteVirtualFileId = (source: string) =>
@@ -44,12 +72,20 @@ export function vanillaExtractPlugin({
 	return {
 		name: 'vanilla-extract',
 		enforce: 'pre',
+
 		configureServer(_server) {
 			server = _server
 		},
-		config(_userConfig, env) {
+
+		config(userConfig, env) {
+			disableInject ||= !!userConfig?.plugins?.some(
+				(plugin: any) => plugin?.name === 'vite-plugin-qwik'
+			)
+
 			const include =
-				env.command === 'serve' ? ['@vanilla-extract/css/injectStyles'] : []
+				env.command === 'serve' && !disableInject
+					? ['@vanilla-extract/css/injectStyles']
+					: []
 
 			return {
 				optimizeDeps: {include},
@@ -62,6 +98,7 @@ export function vanillaExtractPlugin({
 				},
 			}
 		},
+
 		async configResolved(resolvedConfig) {
 			config = resolvedConfig
 			packageName = getPackageInfo(config.root).name
@@ -71,61 +108,45 @@ export function vanillaExtractPlugin({
 			}
 
 			if (
+				!hasEmitCssOverride &&
 				config.plugins.some(plugin =>
-					['astro:build', 'solid-start-server', 'vite-plugin-qwik'].includes(
-						plugin.name
-					)
+					[
+						'astro:build',
+						'solid-start-server',
+						'vite-plugin-qwik',
+						'vite-plugin-svelte',
+					].includes(plugin.name)
 				)
 			) {
-				forceEmitCssInSsrBuild = true
+				resolvedEmitCssInSsr = true
 			}
 		},
-		// Re-parse .css.ts files when they change
-		async handleHotUpdate({file, modules}) {
-			if (!cssFileFilter.test(file)) return
-			try {
-				const virtuals: any[] = []
-				const invalidate = (type: string) => {
-					const found = server.moduleGraph.getModulesByFile(`${file}${type}`)
-					found?.forEach(m => {
-						virtuals.push(m)
-						return server.moduleGraph.invalidateModule(m)
-					})
-				}
-				invalidate(virtualExtCss)
-				invalidate(virtualExtJs)
-				// load new CSS
-				await server.ssrLoadModule(file)
-				return [...modules, ...virtuals]
-			} catch (e) {
-				// eslint-disable-next-line no-console
-				console.error(e)
-				throw e
-			}
-		},
+
 		// Convert .vanilla.(js|css) URLs to their absolute version
 		resolveId(source) {
-			const [validId, query] = source.split('?')
-			if (!validId.endsWith(virtualExtCss) && !validId.endsWith(virtualExtJs)) {
-				return
-			}
+			const match = virtualRE.exec(source) as unknown as IdMatch
+			if (!match?.groups!.ext) return
+			const {source: validId, ext, query} = match.groups
 
 			// Absolute paths seem to occur often in monorepos, where files are
 			// imported from outside the config root.
-			const absoluteId = source.startsWith(config.root)
-				? source
+			const absoluteId = validId.startsWith(config.root)
+				? validId
 				: getAbsoluteVirtualFileId(validId)
 
-			// Keep the original query string for HMR.
-			return absoluteId + (query ? `?${query}` : '')
-		},
-		// Provide virtual CSS content
-		async load(id) {
-			const [validId] = id.split('?')
-
-			if (!virtualRE.test(validId)) {
-				return
+			// There should always be an entry in the `cssMap` here.
+			// The only valid scenario for a missing one is if someone had written
+			// a file in their app using the .vanilla.js/.vanilla.css extension
+			if (cssMap.has(absoluteId)) {
+				// Keep the original query string for HMR.
+				return absoluteId + ext + (query || '')
 			}
+		},
+		// Provide virtual .vanilla.(js|css) content
+		async load(id) {
+			const match = virtualRE.exec(id) as unknown as IdMatch
+			if (!match?.groups.ext) return
+			const {source: validId} = match.groups
 
 			if (!cssMap.has(validId)) {
 				// Try to parse the parent
@@ -141,10 +162,9 @@ export function vanillaExtractPlugin({
 				return
 			}
 
-			if (validId.endsWith(virtualExtCss)) {
+			if (match.groups.ext === virtualExtCss) {
 				return css
 			}
-
 			return outdent`
 				import { injectStyles } from '@vanilla-extract/css/injectStyles';
 
@@ -162,26 +182,32 @@ export function vanillaExtractPlugin({
 				}
 			`
 		},
-		// Side-effect: If this results in new CSS, it will send HMR event
-		async transform(code, id, ssrParam) {
-			const [validId] = id.split('?')
 
-			if (!cssFileFilter.test(validId)) {
+		// Side-effect: If this results in new CSS, it will send HMR event
+		async transform(code, id, viteOptions) {
+			const match = virtualRE.exec(id) as unknown as IdMatch
+			if (
+				!match ||
+				!cssFileFilter.test(match.groups.source) ||
+				// We don't want to transform the virtual files
+				match.groups.ext
+			)
 				return null
-			}
+			const {source: validId} = match.groups
+
+			// TODO when css exists in map, use it. Needs remove on invalidate
 
 			const identOption =
 				identifiers ?? (config.mode === 'production' ? 'short' : 'debug')
 
-			let ssr: boolean | undefined
+			const ssr =
+				// support old Vite API
+				typeof viteOptions === 'boolean' ? viteOptions : viteOptions?.ssr
 
-			if (typeof ssrParam === 'boolean') {
-				ssr = ssrParam
-			} else {
-				ssr = ssrParam?.ssr
-			}
-
-			if (ssr && !forceEmitCssInSsrBuild) {
+			// If we're in SSR mode, and we're not emitting CSS in SSR, then
+			// we can skip the transform. The CSS will be injected on the
+			// client by running the VE functions.
+			if (ssr && !resolvedEmitCssInSsr) {
 				return transform({
 					source: code,
 					filePath: normalizePath(validId),
@@ -201,13 +227,13 @@ export function vanillaExtractPlugin({
 			for (const file of watchFiles) {
 				// In start mode, we need to prevent the file from rewatching itself.
 				// If it's a `build --watch`, it needs to watch everything.
-				if (config.command === 'build' || file !== validId) {
+				if (config.command === 'build' || normalizePath(file) !== validId) {
 					this.addWatchFile(file)
 				}
 			}
 
 			const hasDefaultExport = defaultExportRE.test(code)
-			let cssSource, filePath
+			let cssSource, virtualPath
 			let output = await processVanillaFile({
 				source,
 				filePath: validId,
@@ -228,45 +254,53 @@ export function vanillaExtractPlugin({
 						cssSource = postCssResult.css
 					}
 
-					;({filePath} = args.fileScope)
-					const projectRootRelativeId = `${filePath}${
-						config.command === 'build' || (ssr && forceEmitCssInSsrBuild)
+					// The extension of the virtual file we'll be importing. .vanilla.css is the CSS text, and .vanilla.js is JS that injects it.
+					const ext =
+						config.command === 'build' || (ssr && emitCssInSsr) || disableInject
 							? virtualExtCss
 							: virtualExtJs
-					}`
-					const absoluteId = getAbsoluteVirtualFileId(projectRootRelativeId)
+
+					const projectRootRelativeId = args.fileScope.filePath
+					const absoluteIdNoExt = getAbsoluteVirtualFileId(
+						projectRootRelativeId
+					)
 					// using relative path to the workspace root in a posix style
-					const cwdRelativeId = path
-						.relative(process.cwd(), absoluteId)
+					virtualPath = path
+						.relative(cwd, absoluteIdNoExt)
 						.split(path.sep)
 						.join(path.posix.sep)
 
+					// During serving, if the CSS is different, we need to invalidate the
+					// module subgraph so that the new CSS is injected.
 					if (
 						server &&
-						cssMap.has(absoluteId) &&
-						cssMap.get(absoluteId) !== cssSource
+						cssMap.has(absoluteIdNoExt) &&
+						cssMap.get(absoluteIdNoExt) !== cssSource
 					) {
 						const {moduleGraph} = server
-						const [module] = Array.from(
-							moduleGraph.getModulesByFile(absoluteId) || []
+						const modules = Array.from(
+							moduleGraph.getModulesByFile(absoluteIdNoExt) || []
 						)
 
-						if (module) {
-							moduleGraph.invalidateModule(module)
+						for (const module of modules) {
+							if (module) {
+								moduleGraph.invalidateModule(module)
 
-							// Vite uses this timestamp to add `?t=` query string automatically for HMR.
-							module.lastHMRTimestamp =
-								(module as any).lastInvalidationTimestamp || Date.now()
+								// Vite uses this timestamp to add `?t=` query string automatically for HMR.
+								module.lastHMRTimestamp =
+									(module as any).lastInvalidationTimestamp || Date.now()
+							}
 						}
 
+						// Notify our injected js that the CSS has changed
 						server.ws.send({
 							type: 'custom',
-							event: styleUpdateEvent(absoluteId),
+							event: styleUpdateEvent(absoluteIdNoExt),
 							data: cssSource,
 						})
 					}
 
-					cssMap.set(absoluteId, cssSource)
+					cssMap.set(absoluteIdNoExt, cssSource)
 
 					if (hasDefaultExport)
 						// We emit the css only in the default export
@@ -275,7 +309,7 @@ export function vanillaExtractPlugin({
 
 					// We use the root relative id here to ensure file contents (content-hashes)
 					// are consistent across build machines
-					return `import "${cwdRelativeId}";`
+					return `import "${virtualPath}${ext}";`
 				},
 			})
 
@@ -283,13 +317,11 @@ export function vanillaExtractPlugin({
 				// We re-export to allow better tree shaking
 				output = output.replace(
 					defaultExportRE,
-					`export {default as default} from '${filePath}${virtualExtCss}?inline';`
+					`export {default as default} from '${virtualPath}${virtualExtCss}?inline';`
 				)
 
 			return {
 				code: output,
-				// importing a .css file has side effects
-				moduleSideEffects: !hasDefaultExport,
 				map: {mappings: ''},
 			}
 		},
