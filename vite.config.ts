@@ -16,6 +16,10 @@ export default defineConfig(() => {
 			lib: {
 				entry: ['./src/index.ts', './src/qwik-styled.ts', './src/vite.ts'],
 				formats: ['es', 'cjs'],
+				fileName: (format: string, entryName: string) =>
+					`${entryName}${entryName.includes('vite') ? '' : '.qwik'}.${
+						format === 'es' ? 'mjs' : 'cjs'
+					}`,
 			},
 			rollupOptions: {
 				// externalize deps that shouldn't be bundled into the library
@@ -24,6 +28,10 @@ export default defineConfig(() => {
 					...excludeAll(dependencies),
 					...excludeAll(peerDependencies),
 				],
+				output: {
+					preserveModules: true,
+					preserveModulesRoot: 'src',
+				},
 			},
 		},
 		plugins: [qwikVite()],
