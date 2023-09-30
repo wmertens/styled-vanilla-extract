@@ -5,9 +5,9 @@
   "license": "MIT",
   "type": "module",
   "types": "./lib-types/index.d.ts",
+  "qwik": "./lib/index.qwik.mjs",
   "exports": {
     "./qwik": {
-      "qwik": "./lib/index.qwik.mjs",
       "import": "./lib/index.qwik.mjs",
       "require": "./lib/index.qwik.cjs",
       "types": "./lib-types/index.d.ts"
@@ -18,7 +18,6 @@
       "types": "./lib-types/vite.d.ts"
     },
     "./qwik-styled": {
-      "qwik": "./lib/qwik-styled.qwik.mjs",
       "import": "./lib/qwik-styled.qwik.mjs",
       "require": "./lib/qwik-styled.qwik.cjs"
     },
