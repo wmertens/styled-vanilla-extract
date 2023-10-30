@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import {defineConfig} from 'vite'
+import {type LibraryFormats, defineConfig} from 'vite'
 import {configDefaults} from 'vitest/config'
 import {qwikVite} from '@builder.io/qwik/optimizer'
 import pkg from './package.json'
@@ -14,12 +14,10 @@ export default defineConfig(() => {
 		build: {
 			target: 'es2020',
 			lib: {
-				entry: ['./src/index.ts', './src/qwik-styled.ts', './src/vite.ts'],
-				formats: ['es', 'cjs'],
+				entry: ['./src/index.ts', './src/qwik-styled.qwik.ts', './src/vite.ts'],
+				formats: ['es', 'cjs'] satisfies LibraryFormats[],
 				fileName: (format: string, entryName: string) =>
-					`${entryName}${entryName.includes('vite') ? '' : '.qwik'}.${
-						format === 'es' ? 'mjs' : 'cjs'
-					}`,
+					`${entryName}.${format === 'es' ? 'mjs' : 'cjs'}`,
 			},
 			rollupOptions: {
 				// externalize deps that shouldn't be bundled into the library
@@ -28,10 +26,6 @@ export default defineConfig(() => {
 					...excludeAll(dependencies),
 					...excludeAll(peerDependencies),
 				],
-				output: {
-					preserveModules: true,
-					preserveModulesRoot: 'src',
-				},
 			},
 		},
 		plugins: [qwikVite()],

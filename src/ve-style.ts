@@ -7,7 +7,7 @@ import {
 	QwikStyledComponent,
 	styled as realStyled,
 	Tags,
-} from './qwik-styled'
+} from './qwik-styled.qwik'
 
 // Copy of Vanilla Extract's ClassNames type
 export type ClassNames = string | Array<ClassNames>
