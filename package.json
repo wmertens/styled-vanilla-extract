@@ -5,11 +5,11 @@
   "license": "MIT",
   "type": "module",
   "types": "./lib-types/index.d.ts",
-  "qwik": "./lib/index.qwik.mjs",
+  "qwik": "./lib/index.mjs",
   "exports": {
     "./qwik": {
-      "import": "./lib/index.qwik.mjs",
-      "require": "./lib/index.qwik.cjs",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs",
       "types": "./lib-types/index.d.ts"
     },
     "./vite": {
