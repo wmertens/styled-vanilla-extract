@@ -4,18 +4,16 @@
   "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
   "license": "MIT",
   "type": "module",
-  "types": "./lib-types/index.d.ts",
+  "types": "./lib/index.d.ts",
   "qwik": "./lib/index.mjs",
   "exports": {
     "./qwik": {
       "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib-types/index.d.ts"
+      "require": "./lib/index.cjs"
     },
     "./vite": {
       "import": "./lib/vite.mjs",
-      "require": "./lib/vite.cjs",
-      "types": "./lib-types/vite.d.ts"
+      "require": "./lib/vite.cjs"
     },
     "./qwik-styled": {
       "import": "./lib/qwik-styled.qwik.mjs",
@@ -25,7 +23,6 @@
   },
   "files": [
     "lib",
-    "lib-types",
     "qwik",
     "vite"
   ],
@@ -35,7 +32,6 @@
   "scripts": {
     "build": "qwik build",
     "build.lib": "vite build --mode lib",
-    "build.types": "tsc --emitDeclarationOnly  && prettier --write lib-types",
     "dev": "vite --mode ssr",
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
@@ -65,6 +61,7 @@
     "tsc-files": "github:wmertens/tsc-files#fixSpawn",
     "typescript": "^5.2.2",
     "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.6.3",
     "vitest": "^0.34.5"
   },
   "peerDependencies": {

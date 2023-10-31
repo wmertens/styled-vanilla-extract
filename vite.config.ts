@@ -2,6 +2,7 @@
 import {type LibraryFormats, defineConfig} from 'vite'
 import {configDefaults} from 'vitest/config'
 import {qwikVite} from '@builder.io/qwik/optimizer'
+import dts from 'vite-plugin-dts'
 import pkg from './package.json'
 
 const {dependencies = {}, peerDependencies = {}} = pkg as any
@@ -28,11 +29,14 @@ export default defineConfig(() => {
 				],
 			},
 		},
-		plugins: [qwikVite()],
+		plugins: [
+			qwikVite(),
+			dts({exclude: ['src/**/*.test.ts', 'src/entry.*.tsx']}),
+		],
 		test: {
 			/* for example, use global to avoid globals imports (describe, test, expect): */
 			// globals: true,
-			exclude: [...configDefaults.exclude, 'lib/**', 'lib-types/**'],
+			exclude: [...configDefaults.exclude, 'lib/**'],
 		},
 	}
 })

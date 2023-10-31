@@ -20,6 +20,9 @@ describe('style', () => {
 		`
 		expect(classes).toMatch(veClassRE)
 	})
+	it('should have types', () => {
+		expectTypeOf(style).parameter(0).not.toBeAny()
+	})
 })
 
 describe('styled[tag]', () => {
@@ -52,5 +55,9 @@ describe('styled[tag]', () => {
 			color: red;
 		`
 		expect(Tag.class).toMatch(veClassRE)
+	})
+	it('should have types', () => {
+		expectTypeOf(styled).parameter(0).not.toBeAny()
+		expectTypeOf(styled).parameter(0).toHaveProperty('color')
 	})
 })
