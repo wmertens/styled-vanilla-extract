@@ -1,6 +1,7 @@
 # Styled Vanilla-Extract ⚡️💅
 
-This provides a [Styled-Components](https://styled-components.com/)-like (SC) API for Qwik, using [vanilla-extract](https://vanilla-extract.style/) (VE) and [stylis](https://stylis.js.org/).
+This provides a [Styled-Components](https://styled-components.com/)-like (SC) API for Qwik,
+using [vanilla-extract](https://vanilla-extract.style/) (VE) and [stylis](https://stylis.js.org/).
 This combination yields a type-checked 0-runtime CSS-in-TS project.
 
 **Try it out now on 👉 [StackBlitz](https://stackblitz.com/edit/styled-vanilla-extract-playground) 👈.**
@@ -38,7 +39,8 @@ gets converted at build time to
 
 `RedText` is a Qwik Lite component ready for use, and the CSS will be included by Qwik automatically.
 
-Type-checking happens automatically thanks to the fact that the source file is a `.ts` file (you can use plain js too) and all helpers have proper typing.
+Type-checking happens automatically thanks to the fact that the source file is a `.ts` file (you can use plain js too)
+and all helpers have proper typing.
 
 ## Installation
 
@@ -48,7 +50,8 @@ Run `npx @builder.io/qwik add styled-vanilla-extract`.
 
 ### Manually
 
-Install the needed NPM modules; they can be dev dependencies because Qwik will bundle them correctly for client and server.
+Install the needed NPM modules; they can be dev dependencies because Qwik will bundle them correctly for client and
+server.
 
 ```sh
 npm i -D styled-vanilla-extract @vanilla-extract/css
@@ -65,30 +68,34 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import {vanillaExtractPlugin} from 'styled-vanilla-extract/vite'
 
 export default defineConfig(() => {
-  const cfg = {
-    build: {sourcemap: true},
-    plugins: [
-      qwikCity(),
-      qwikVite(),
-      tsconfigPaths(),
-      // ---------------- ADD THIS ----------------
-      // This has to come somewhere after qwikVite, or the exports break
-      vanillaExtractPlugin(),
-    ],
-  }
-  return cfg
+	const cfg = {
+		build: {sourcemap: true},
+		plugins: [
+			qwikCity(),
+			qwikVite(),
+			tsconfigPaths(),
+			// ---------------- ADD THIS ----------------
+			// This has to come somewhere after qwikVite, or the exports break
+			vanillaExtractPlugin(),
+		],
+	}
+	return cfg
 })
 ```
 
-Then, check if your editor has styled-components support. For example, VS Code has [vscode-styled-components](https://marketplace.visualstudio.com/items?itemName=styled-components.vscode-styled-components).
+Then, check if your editor has styled-components support. For example, VS Code
+has [vscode-styled-components](https://marketplace.visualstudio.com/items?itemName=styled-components.vscode-styled-components).
 
 ## Usage
 
-This library is complementary to vanilla-extract, so head over to the [vanilla-extract docs](https://vanilla-extract.style/documentation/getting-started#create-a-style) to learn the basics.
+This library is complementary to vanilla-extract, so head over to
+the [vanilla-extract docs](https://vanilla-extract.style/documentation/getting-started#create-a-style) to learn the
+basics.
 
 ### styled
 
-You use `styled` to create Qwik components that you can import. This uses the same configuration objects as the vanilla-extract `style()` function:
+You use `styled` to create Qwik components that you can import. This uses the same configuration objects as the
+vanilla-extract `style()` function:
 
 header.css.ts:
 
@@ -100,14 +107,14 @@ export const fancy = style({})
 
 // Header: a Qwik Lite Component
 export const Header = styled.header({
-  padding: '0.5em',
-  border: 'thin solid var(--color-hint)',
-  borderBottom: 'none',
-  selectors: {
-    [`${fancy} &, ${fancy}&`]: {
-      background: 'gold',
-    },
-  },
+	padding: '0.5em',
+	border: 'thin solid var(--color-hint)',
+	borderBottom: 'none',
+	selectors: {
+		[`${fancy} &, ${fancy}&`]: {
+			background: 'gold',
+		},
+	},
 })
 ```
 
@@ -117,20 +124,21 @@ header.tsx:
 import {Header, fancy} from './header.css'
 
 export default component$(() => {
-  // do header stuff
-  return (
-    <Header class={isFancy && fancy}>
-      Header, possibly fancy.
-      <br />
-      The classname it uses is {Header.class}.
-    </Header>
-  )
+	// do header stuff
+	return (
+		<Header class={isFancy && fancy}>
+			Header, possibly fancy.
+			<br/>
+			The classname it uses is {Header.class}.
+		</Header>
+	)
 })
 ```
 
 ### css
 
-There's also `css` template string helper to convert CSS syntax to vanilla-extract syntax. You can use it anywhere that accepts vanilla-extract style objects:
+There's also `css` template string helper to convert CSS syntax to vanilla-extract syntax. You can use it anywhere that
+accepts vanilla-extract style objects:
 
 header.css.ts:
 
@@ -177,7 +185,8 @@ export const Header = styled.h1`
 
 By default, the CSS you create will be emitted in a .css file that your html will load.
 
-You can instead get the CSS as a string that you then give to Qwik's `useStyles$()`. To do this, you must have a default export in your definition:
+You can instead get the CSS as a string that you then give to Qwik's `useStyles$()`. To do this, you must have a default
+export in your definition:
 
 header.css.ts:
 
@@ -202,19 +211,22 @@ import {component$, useStyles$} from '@builder.io/qwik'
 import style, {Header} from './header.css'
 
 export default component$(() => {
-  useStyles$(style)
+	useStyles$(style)
 
-  return <Header>I'm styled!</Header>
+	return <Header>I'm styled!</Header>
 })
 ```
 
-This has the advantage that your initial HTML includes only the styles you actually use, and they are inline, which reduces lag.
+This has the advantage that your initial HTML includes only the styles you actually use, and they are inline, which
+reduces lag.
 If you are building a Single Page Application, this is most likely what you want.
 
 ## Notes
 
-- All styles you create in a css.ts file are included in the CSS output. They do not get tree-shaken, unlike the exported identifiers. This is vanilla-extract behavior.
-- Qwik doesn't do hot reloading at the moment. It also has problems with changing .css files. You might have to reload the page manually sometimes to get styles to apply.
+- All styles you create in a css.ts file are included in the CSS output. They do not get tree-shaken, unlike the
+  exported identifiers. This is vanilla-extract behavior.
+- Qwik doesn't do hot reloading at the moment. It also has problems with changing .css files. You might have to reload
+  the page manually sometimes to get styles to apply.
 
 ## Migrating from Styled Components
 
@@ -222,14 +234,27 @@ Several features are not supported because they are impossible as 0-runtime, or 
 
 ### Replacing function interpolation
 
-Instead of embedding a function in your CSS like `` `color: ${p => p.error ? 'red':'black'}` ``, you should use extra classes, inline styles, CSS variables, or a combination thereof. Any option is easy to implement with Qwik.
+Instead of embedding a function in your CSS like `` `color: ${p => p.error ? 'red':'black'}` ``, you should use extra
+classes, inline styles, CSS variables, or a combination thereof. Any option is easy to implement with Qwik.
 
 ```tsx
 import {Text, showError} from './component.css'
 
 // ... hasError is a boolean
 // Object of classnames and booleans
-<Text class={{[showError]: hasError}}>text</Text>
+<
+Text
+
+class
+
+= {
+{
+	[showError]
+:
+	hasError
+}
+}>
+text < /Text>
 // Class string
 <Text class={hasError && showError}>text</Text>
 // Style object
@@ -244,7 +269,9 @@ Use CSS variables instead. They are supported in all relevant browsers.
 
 You can also import any code you like to create the CSS at build time, there are no restrictions, go wild!
 
-Vanilla-extract also has nice helper projects for this purpose, [Sprinkles](https://vanilla-extract.style/documentation/packages/sprinkles/) and [Recipes](https://vanilla-extract.style/documentation/packages/sprinkles/).
+Vanilla-extract also has nice helper projects for this
+purpose, [Sprinkles](https://vanilla-extract.style/documentation/packages/sprinkles/)
+and [Recipes](https://vanilla-extract.style/documentation/packages/recipes/).
 
 ### Extending a component
 
@@ -259,8 +286,8 @@ const Button = styled.button`
 `
 
 export const RedButton = styled.button([
-  Button,
-  css`
+	Button,
+	css`
     background-color: red;
   `,
 ])
