@@ -244,7 +244,7 @@ Use CSS variables instead. They are supported in all relevant browsers.
 
 You can also import any code you like to create the CSS at build time, there are no restrictions, go wild!
 
-Vanilla-extract also has nice helper projects for this purpose, [Sprinkles](https://vanilla-extract.style/documentation/packages/sprinkles/) and [Recipes](https://vanilla-extract.style/documentation/packages/sprinkles/).
+Vanilla-extract also has nice helper projects for this purpose, [Sprinkles](https://vanilla-extract.style/documentation/packages/sprinkles/) and [Recipes](https://vanilla-extract.style/documentation/packages/recipes/).
 
 ### Extending a component
 
