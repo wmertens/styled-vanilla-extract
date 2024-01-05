@@ -281,8 +281,13 @@ export function vanillaExtractPlugin({
 						const modules = Array.from(
 							moduleGraph.getModulesByFile(absoluteIdNoExt) || []
 						)
+						const virtualCSSModules = Array.from(
+							moduleGraph.getModulesByFile(
+								`${absoluteIdNoExt}${virtualExtCss}`
+							) || []
+						)
 
-						for (const module of modules) {
+						for (const module of [...modules, ...virtualCSSModules]) {
 							if (module) {
 								moduleGraph.invalidateModule(module)
 
