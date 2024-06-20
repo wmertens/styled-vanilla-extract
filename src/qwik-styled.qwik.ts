@@ -1,4 +1,4 @@
-import {FunctionComponent, QwikIntrinsicElements, jsx} from '@builder.io/qwik'
+import {FunctionComponent, jsx, type IntrinsicElements} from '@builder.io/qwik'
 
 // Copied from HtmlIntrinsiceElements because I couldn't make `keyof QwikIntrinsicElements` work well
 export type Tags =
@@ -121,7 +121,7 @@ export type Tags =
 	| 'webview'
 
 export type QwikStyledComponent<Tag extends Tags = 'div'> = FunctionComponent<
-	QwikIntrinsicElements[Tag]
+	IntrinsicElements[Tag]
 > & {class: string}
 
 export const isStyled = (o: any): o is QwikStyledComponent =>
@@ -130,7 +130,7 @@ export const isStyled = (o: any): o is QwikStyledComponent =>
 export const styled = <Tag extends Tags>(
 	Tag: Tag,
 	myClassName: string
-): FunctionComponent<QwikIntrinsicElements[Tag]> & {class: string} => {
+): FunctionComponent<IntrinsicElements[Tag]> & {class: string} => {
 	const Lite = ({class: extraClass, ...props}: {[x: string]: any}) => {
 		let classes: string[] | undefined
 		const check = (cl?: string | {[c: string]: boolean}) => {

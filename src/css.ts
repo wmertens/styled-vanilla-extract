@@ -54,7 +54,7 @@ export const css = (
 					const key = getExpr(e)
 					if (veVariableRE.test(key)) return key.slice(4, -1)
 					return key
-			  })
+				})
 			: `!!!{${typeof str}: ${str}}`
 	const interpolateValue = (str: string) =>
 		typeof str === 'string'
