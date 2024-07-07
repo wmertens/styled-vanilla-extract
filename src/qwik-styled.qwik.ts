@@ -1,4 +1,10 @@
-import {FunctionComponent, jsx, type IntrinsicElements} from '@builder.io/qwik'
+import {
+	Slot,
+	component$,
+	jsx,
+	type Component,
+	type PropsOf,
+} from '@builder.io/qwik'
 
 // Copied from HtmlIntrinsiceElements because I couldn't make `keyof QwikIntrinsicElements` work well
 export type Tags =
@@ -120,8 +126,8 @@ export type Tags =
 	| 'wbr'
 	| 'webview'
 
-export type QwikStyledComponent<Tag extends Tags = 'div'> = FunctionComponent<
-	IntrinsicElements[Tag]
+export type QwikStyledComponent<Tag extends Tags = 'div'> = Component<
+	PropsOf<Tag>
 > & {class: string}
 
 export const isStyled = (o: any): o is QwikStyledComponent =>
@@ -130,7 +136,7 @@ export const isStyled = (o: any): o is QwikStyledComponent =>
 export const styled = <Tag extends Tags>(
 	Tag: Tag,
 	myClassName: string
-): FunctionComponent<IntrinsicElements[Tag]> & {class: string} => {
+): Component<PropsOf<Tag>> & {class: string} => {
 	const Lite = ({class: extraClass, ...props}: {[x: string]: any}) => {
 		let classes: string[] | undefined
 		const check = (cl?: string | {[c: string]: boolean}) => {
@@ -147,9 +153,13 @@ export const styled = <Tag extends Tags>(
 		}
 		check(extraClass)
 		return jsx(
-			Tag,
+			TagComponent,
 			// @ts-ignore
-			{...props, class: extraClass ? [myClassName, extraClass] : myClassName}
+			{
+				...props,
+				Tag,
+				class: extraClass ? [myClassName, extraClass] : myClassName,
+			}
 		)
 	}
 	// To allow interpolation
@@ -162,3 +172,10 @@ export const styled = <Tag extends Tags>(
 	Lite.toString = () => myClassName
 	return Lite
 }
+
+//To allow named slots
+const TagComponent = component$<{Tag: string; [x: PropertyKey]: any}>(
+	({Tag, ...props}) => {
+		return jsx(Tag, {...props, children: jsx(Slot, {})})
+	}
+)
