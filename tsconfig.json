@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
-		"target": "ES2017",
+		"target": "ES2018",
 		"module": "ES2020",
 		"lib": ["es2020", "DOM"],
 		"jsx": "react-jsx",
@@ -14,7 +14,7 @@
 		"skipLibCheck": true,
 		"incremental": true,
 		"isolatedModules": true,
-		"types": ["vite/client"],
+		"types": ["vite/client"]
 	},
-	"include": ["src"],
+	"include": ["src"]
 }
