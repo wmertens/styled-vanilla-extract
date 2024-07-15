@@ -1,6 +1,6 @@
 {
   "name": "styled-vanilla-extract",
-  "version": "0.5.13",
+  "version": "1.0.0",
   "description": "A 0-runtime styled-components-like API for Qwik using vanilla-extract.",
   "license": "MIT",
   "type": "module",
