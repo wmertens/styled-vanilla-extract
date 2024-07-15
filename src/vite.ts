@@ -256,7 +256,9 @@ export function vanillaExtractPlugin({
 
 					// The extension of the virtual file we'll be importing. .vanilla.css is the CSS text, and .vanilla.js is JS that injects it.
 					const ext =
-						config.command === 'build' || (ssr && emitCssInSsr) || disableInject
+						config.command === 'build' ||
+						(ssr && resolvedEmitCssInSsr) ||
+						disableInject
 							? virtualExtCss
 							: virtualExtJs
 
