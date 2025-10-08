@@ -25,6 +25,7 @@ jobs:
 
   lint:
     if: ${{ needs.verify.outputs.should_skip != 'true' }}
+    needs: verify
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -48,17 +49,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: corepack npm ci
+          cache: pnpm
+      - run: corepack pnpm i --frozen-lockfile
 
       - name: lint
-        run: npm run lint
+        run: pnpm run lint
         shell: bash
         env:
           GH_EVENT: ${{ github.event_name }}
 
   test:
     if: ${{ needs.verify.outputs.should_skip != 'true' }}
+    needs: verify
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -82,12 +84,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: corepack npm ci
+          cache: pnpm
+      - run: corepack pnpm i --frozen-lockfile
 
       # Note, these only check changed files
       - name: tests
-        run: npm run test
+        run: pnpm run test
         # For pipefail
         shell: bash
         env:
